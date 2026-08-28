@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SCRAPHEAP TYCOON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#14171a;
+    --bg-panel:#1d2125;
+    --bg-card:#242830;
+    --bg-card-hover:#2b303a;
+    --rust:#c1502e;
+    --rust-light:#e0713f;
+    --yellow:#e8b23b;
+    --concrete:#9a9d97;
+    --offwhite:#edeae3;
+    --line:#33383f;
+    --good:#7fb069;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 15% 0%, rgba(193,80,46,0.08), transparent 40%),
+      radial-gradient(circle at 85% 100%, rgba(232,178,59,0.06), transparent 40%),
+      var(--bg);
+    color:var(--offwhite);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+  }
+  .hud{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:14px 18px;
+    background:var(--bg-panel);
+    border-bottom:3px solid var(--rust);
+    position:sticky;
+    top:0;
+    z-index:10;
+    flex-wrap:wrap;
+  }
+  .brand{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    letter-spacing:1px;
+    font-size:20px;
+    text-transform:uppercase;
+    color:var(--offwhite);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .brand .tag{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    background:var(--rust);
+    color:var(--offwhite);
+    padding:2px 6px;
+    border-radius:3px;
+    letter-spacing:0;
+    font-weight:700;
+  }
+  .stats{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .stat{
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:6px 12px;
+    text-align:right;
+    min-width:88px;
+  }
+  .stat .label{
+    font-size:9px;
+    letter-spacing:1.5px;
+    color:var(--concrete);
+    font-family:'Oswald',sans-serif;
+    text-transform:uppercase;
+  }
+  .stat .value{
+    font-family:'JetBrains Mono',monospace;
+    font-weight:700;
+    font-size:15px;
+    color:var(--yellow);
+  }
+  .stat.rep .value{color:var(--rust-light);}
+
+  .layout{
+    display:flex;
+    gap:16px;
+    padding:18px;
+    max-width:1100px;
+    margin:0 auto;
+    align-items:flex-start;
+    flex-wrap:wrap;
+  }
+  .yard{
+    flex:1 1 340px;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:16px;
+    min-height:380px;
+    justify-content:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .yard::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size:24px 24px;
+    pointer-events:none;
+  }
+  .press-wrap{
+    position:relative;
+    z-index:1;
+  }
+  #crushBtn{
+    background:linear-gradient(180deg, var(--rust-light), var(--rust));
+    border:none;
+    border-radius:16px;
+    width:180px;
+    height:180px;
+    font-size:64px;
+    cursor:pointer;
+    box-shadow:0 8px 0 #8f3a20, 0 10px 18px rgba(0,0,0,0.4);
+    transition:transform 0.06s ease;
+    position:relative;
+  }
+  #crushBtn:active{
+    transform:translateY(6px);
+    box-shadow:0 2px 0 #8f3a20, 0 4px 10px rgba(0,0,0,0.4);
+  }
+  #crushBtn.squish{animation:squish 0.18s ease;}
+  @keyframes squish{
+    0%{transform:scaleY(1);}
+    40%{transform:scaleY(0.82);}
+    100%{transform:scaleY(1);}
+  }
+  .press-label{
+    font-family:'Oswald',sans-serif;
+    text-transform:uppercase;
+    letter-spacing:2px;
+    font-size:13px;
+    color:var(--concrete);
+    text-align:center;
+  }
+  .float-layer{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:5;
+  }
+  .float-txt{
+    position:absolute;
+    font-family:'JetBrains Mono',monospace;
+    font-weight:700;
+    color:var(--yellow);
+    font-size:15px;
+    animation:rise 0.9s ease-out forwards;
+    left:50%;
+    top:40%;
+  }
+  @keyframes rise{
+    0%{opacity:1; transform:translate(-50%,0);}
+    100%{opacity:0; transform:translate(-50%,-70px);}
+  }
+
+  .machines{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    justify-content:center;
+    z-index:1;
+    min-height:28px;
+  }
+  .machine-badge{
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:4px 10px;
+    font-size:12px;
+    font-family:'JetBrains Mono',monospace;
+    display:flex;
+    gap:6px;
+    align-items:center;
+  }
+
+  .shop{
+    flex:1 1 380px;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px;
+  }
+  .shop h2, .upgrades h2{
+    font-family:'Oswald',sans-serif;
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+    font-size:14px;
+    color:var(--concrete);
+    margin:0 0 12px 0;
+    border-bottom:1px solid var(--line);
+    padding-bottom:8px;
+  }
+  .machine-card{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:10px 12px;
+    margin-bottom:8px;
+    cursor:pointer;
+    transition:background 0.12s ease, transform 0.06s ease;
+  }
+  .machine-card:hover{background:var(--bg-card-hover);}
+  .machine-card:active{transform:scale(0.98);}
+  .machine-card.disabled{opacity:0.45; cursor:not-allowed;}
+  .machine-card.disabled:hover{background:var(--bg-card);}
+  .m-icon{
+    font-size:28px;
+    width:42px;
+    text-align:center;
+  }
+  .m-info{flex:1;}
+  .m-name{
+    font-family:'Oswald',sans-serif;
+    font-size:14px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+  }
+  .m-sub{
+    font-size:11px;
+    color:var(--concrete);
+    font-family:'JetBrains Mono',monospace;
+  }
+  .m-buy{
+    text-align:right;
+  }
+  .m-cost{
+    font-family:'JetBrains Mono',monospace;
+    font-weight:700;
+    color:var(--yellow);
+    font-size:14px;
+  }
+  .m-owned{
+    font-size:10px;
+    color:var(--concrete);
+    font-family:'JetBrains Mono',monospace;
+  }
+
+  .upgrades{
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px;
+    margin-top:16px;
+  }
+
+  .prestige-bar{
+    max-width:1100px;
+    margin:0 auto 20px auto;
+    padding:0 18px;
+  }
+  .prestige-card{
+    background:linear-gradient(90deg, rgba(232,178,59,0.10), rgba(193,80,46,0.10));
+    border:1px solid var(--yellow);
+    border-radius:10px;
+    padding:14px 18px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .prestige-card .ptxt{
+    font-family:'Oswald',sans-serif;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    font-size:13px;
+    color:var(--offwhite);
+  }
+  .prestige-card .ptxt small{
+    display:block;
+    font-family:'Inter',sans-serif;
+    text-transform:none;
+    letter-spacing:0;
+    color:var(--concrete);
+    font-size:11px;
+    margin-top:2px;
+  }
+  #prestigeBtn{
+    background:var(--yellow);
+    color:#241a05;
+    border:none;
+    border-radius:8px;
+    padding:10px 18px;
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    cursor:pointer;
+    font-size:13px;
+  }
+  #prestigeBtn:disabled{
+    background:#4a4a44;
+    color:#8a8a82;
+    cursor:not-allowed;
+  }
+  footer{
+    text-align:center;
+    color:var(--line);
+    font-size:11px;
+    padding:20px;
+    font-family:'JetBrains Mono',monospace;
+  }
+  @media (max-width:640px){
+    .hud{flex-direction:column; align-items:flex-start;}
+    #crushBtn{width:150px;height:150px;font-size:52px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hud">
+  <div class="brand">🔩 SCRAPHEAP <span style="color:var(--rust-light)">TYCOON</span> <span class="tag">v1</span></div>
+  <div class="stats">
+    <div class="stat"><div class="label">Scrap</div><div class="value" id="statScrap">$0</div></div>
+    <div class="stat"><div class="label">Per Sec</div><div class="value" id="statRate">$0</div></div>
+    <div class="stat rep"><div class="label">Reputation</div><div class="value" id="statRep">×1.0</div></div>
+  </div>
+</div>
+
+<div class="prestige-bar">
+  <div class="prestige-card">
+    <div class="ptxt">Reopen the yard for a franchise license
+      <small id="prestigeInfo">Earn a lifetime total of $5,000 to unlock your first reputation star.</small>
+    </div>
+    <button id="prestigeBtn" disabled>New License</button>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="yard">
+    <div class="press-wrap">
+      <button id="crushBtn">🚗</button>
+      <div class="float-layer" id="floatLayer"></div>
+    </div>
+    <div class="press-label">Tap the car to crush it for scrap</div>
+    <div class="machines" id="machineBadges"></div>
+  </div>
+
+  <div style="flex:1 1 380px; display:flex; flex-direction:column; gap:16px;">
+    <div class="shop">
+      <h2>Machines for hire</h2>
+      <div id="machineList"></div>
+    </div>
+    <div class="upgrades">
+      <h2>Crew upgrades</h2>
+      <div id="upgradeList"></div>
+    </div>
+  </div>
+</div>
+
+<footer>Prototype build — progress saves automatically to this device.</footer>
+
+<script>
+(function(){
+  const MACHINES = [
+    {id:'compactor', name:'Car Compactor', emoji:'🚗', baseCost:15,    costMult:1.14, baseOutput:0.6},
+    {id:'magnet',    name:'Magnet Crane',  emoji:'🧲', baseCost:120,   costMult:1.15, baseOutput:4},
+    {id:'shredder',  name:'Steel Shredder',emoji:'⚙️', baseCost:1400,  costMult:1.16, baseOutput:26},
+    {id:'baler',     name:'Baler Press',   emoji:'📦', baseCost:16000, costMult:1.17, baseOutput:160},
+    {id:'smelter',   name:'Smelter Furnace',emoji:'🔥', baseCost:190000,costMult:1.18, baseOutput:1100},
+    {id:'sorter',    name:'AI Sort Line',  emoji:'🤖', baseCost:2400000,costMult:1.19, baseOutput:7200},
+  ];
+
+  let state = {
+    scrap: 0,
+    totalEarned: 0,
+    clickLevel: 0,
+    owned: {},
+    reputation: 0,
+  };
+  MACHINES.forEach(m => state.owned[m.id] = 0);
+
+  const CLICK_UPGRADE = {baseCost:50, costMult:1.55, baseGain:1};
+
+  function fmt(n){
+    if(n < 1000) return '$' + Math.floor(n).toLocaleString();
+    const units = ['K','M','B','T','Qa','Qi'];
+    let u = -1;
+    let v = n;
+    while(v >= 1000 && u < units.length-1){ v/=1000; u++; }
+    return '$' + v.toFixed(v < 10 ? 2 : 1) + units[u];
+  }
+
+  function multiplier(){ return 1 + state.reputation * 0.15; }
+  function clickPower(){ return (1 + state.clickLevel * CLICK_UPGRADE.baseGain) * multiplier(); }
+  function machineCost(m){ return Math.ceil(m.baseCost * Math.pow(m.costMult, state.owned[m.id])); }
+  function clickUpgradeCost(){ return Math.ceil(CLICK_UPGRADE.baseCost * Math.pow(CLICK_UPGRADE.costMult, state.clickLevel)); }
+  function ratePerSec(){
+    let total = 0;
+    MACHINES.forEach(m => total += m.baseOutput * state.owned[m.id]);
+    return total * multiplier();
+  }
+  function prestigeThreshold(){ return 5000 * Math.pow(4, state.reputation); }
+  function prestigeGain(){
+    if(state.totalEarned < prestigeThreshold()) return 0;
+    return Math.max(1, Math.floor(Math.sqrt(state.totalEarned / 5000)) - state.reputation);
+  }
+
+  function renderMachineList(){
+    const el = document.getElementById('machineList');
+    el.innerHTML = '';
+    MACHINES.forEach(m => {
+      const cost = machineCost(m);
+      const affordable = state.scrap >= cost;
+      const card = document.createElement('div');
+      card.className = 'machine-card' + (affordable ? '' : ' disabled');
+      card.innerHTML = `
+        <div class="m-icon">${m.emoji}</div>
+        <div class="m-info">
+          <div class="m-name">${m.name}</div>
+          <div class="m-sub">+${fmt(m.baseOutput * multiplier())}/sec each</div>
+        </div>
+        <div class="m-buy">
+          <div class="m-cost">${fmt(cost)}</div>
+          <div class="m-owned">owned: ${state.owned[m.id]}</div>
+        </div>`;
+      card.onclick = () => buyMachine(m);
+      el.appendChild(card);
+    });
+  }
+
+  function renderUpgradeList(){
+    const el = document.getElementById('upgradeList');
+    const cost = clickUpgradeCost();
+    const affordable = state.scrap >= cost;
+    el.innerHTML = `
+      <div class="machine-card ${affordable ? '' : 'disabled'}" id="clickUpgradeCard">
+        <div class="m-icon">💪</div>
+        <div class="m-info">
+          <div class="m-name">Stronger Swing</div>
+          <div class="m-sub">Level ${state.clickLevel} · current tap value ${fmt(clickPower())}</div>
+        </div>
+        <div class="m-buy">
+          <div class="m-cost">${fmt(cost)}</div>
+          <div class="m-owned">tap to hire</div>
+        </div>
+      </div>`;
+    document.getElementById('clickUpgradeCard').onclick = buyClickUpgrade;
+  }
+
+  function renderBadges(){
+    const el = document.getElementById('machineBadges');
+    el.innerHTML = '';
+    MACHINES.forEach(m => {
+      if(state.owned[m.id] > 0){
+        const b = document.createElement('div');
+        b.className = 'machine-badge';
+        b.innerHTML = `${m.emoji} ×${state.owned[m.id]}`;
+        el.appendChild(b);
+      }
+    });
+  }
+
+  function renderStats(){
+    document.getElementById('statScrap').textContent = fmt(state.scrap);
+    document.getElementById('statRate').textContent = fmt(ratePerSec()) + '/s';
+    document.getElementById('statRep').textContent = '×' + multiplier().toFixed(2);
+
+    const need = prestigeThreshold();
+    const gain = prestigeGain();
+    const btn = document.getElementById('prestigeBtn');
+    const info = document.getElementById('prestigeInfo');
+    if(gain > 0){
+      btn.disabled = false;
+      info.textContent = `Reopen now for +${gain} reputation star${gain>1?'s':''} (×${(0.15*gain).toFixed(2)} boost). This resets scrap and machines.`;
+    } else {
+      btn.disabled = true;
+      info.textContent = `Earn a lifetime total of ${fmt(need)} to unlock your next reputation star. Progress: ${fmt(state.totalEarned)} / ${fmt(need)}.`;
+    }
+  }
+
+  function renderAll(){
+    renderMachineList();
+    renderUpgradeList();
+    renderBadges();
+    renderStats();
+  }
+
+  function earn(amount){
+    state.scrap += amount;
+    state.totalEarned += amount;
+  }
+
+  function buyMachine(m){
+    const cost = machineCost(m);
+    if(state.scrap < cost) return;
+    state.scrap -= cost;
+    state.owned[m.id] += 1;
+    renderAll();
+    save();
+  }
+
+  function buyClickUpgrade(){
+    const cost = clickUpgradeCost();
+    if(state.scrap < cost) return;
+    state.scrap -= cost;
+    state.clickLevel += 1;
+    renderAll();
+    save();
+  }
+
+  function spawnFloat(text){
+    const layer = document.getElementById('floatLayer');
+    const t = document.createElement('div');
+    t.className = 'float-txt';
+    t.textContent = text;
+    t.style.left = (45 + Math.random()*10) + '%';
+    layer.appendChild(t);
+    setTimeout(() => t.remove(), 950);
+  }
+
+  document.getElementById('crushBtn').addEventListener('click', () => {
+    const gain = clickPower();
+    earn(gain);
+    spawnFloat('+' + fmt(gain));
+    const btn = document.getElementById('crushBtn');
+    btn.classList.remove('squish');
+    void btn.offsetWidth;
+    btn.classList.add('squish');
+    renderStats();
+  });
+
+  document.getElementById('prestigeBtn').addEventListener('click', () => {
+    const gain = prestigeGain();
+    if(gain <= 0) return;
+    state.reputation += gain;
+    state.scrap = 0;
+    state.totalEarned = 0;
+    MACHINES.forEach(m => state.owned[m.id] = 0);
+    state.clickLevel = 0;
+    renderAll();
+    save();
+  });
+
+  // idle tick
+  setInterval(() => {
+    const rate = ratePerSec();
+    if(rate > 0){
+      earn(rate / 5); // ticking 5x/sec
+    }
+    renderStats();
+  }, 200);
+
+  // periodically refresh shop afford-states (cheap re-render)
+  setInterval(() => { renderMachineList(); renderUpgradeList(); }, 600);
+
+  async function save(){
+    try{
+      await window.storage.set('scrapheap-save', JSON.stringify(state), false);
+    }catch(e){ /* storage not available; game still works in-session */ }
+  }
+
+  async function load(){
+    try{
+      const res = await window.storage.get('scrapheap-save', false);
+      if(res && res.value){
+        const loaded = JSON.parse(res.value);
+        state = Object.assign(state, loaded);
+        MACHINES.forEach(m => { if(!(m.id in state.owned)) state.owned[m.id] = 0; });
+      }
+    }catch(e){ /* no save yet */ }
+    renderAll();
+  }
+
+  setInterval(save, 6000);
+  load();
+})();
+</script>
+</body>
+</html>
