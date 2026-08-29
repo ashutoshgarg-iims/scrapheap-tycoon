@@ -131,6 +131,15 @@
   .lb-row{display:flex; justify-content:space-between; padding:7px 10px; border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:12px;}
   .lb-row.you{background:rgba(244,193,78,0.15); border:1px solid var(--yellow);}
   .lb-note{font-size:10px; color:var(--concrete); margin-top:8px; font-family:'Inter',sans-serif;}
+  .centers-row{display:flex; gap:10px; overflow-x:auto; padding-bottom:4px;}
+  .center-card{flex:0 0 auto; width:150px; background:var(--bg-card); border:1px solid var(--line); border-radius:10px; padding:10px; text-align:left;}
+  .center-card.active{border-color:var(--yellow); background:rgba(244,193,78,0.1);}
+  .center-card .cc-badge{font-size:22px;}
+  .center-card .cc-title{font-family:'Oswald',sans-serif; text-transform:uppercase; font-size:12px; margin-top:4px;}
+  .center-card .cc-sub{font-size:10px; color:var(--concrete); font-family:'JetBrains Mono',monospace; margin-top:4px; line-height:1.4;}
+  .badge-row{display:flex; flex-wrap:wrap; gap:8px;}
+  .badge-chip{background:var(--bg-card); border:1px solid var(--yellow); border-radius:20px; padding:6px 12px; font-size:11px; font-family:'JetBrains Mono',monospace; color:var(--yellow); display:flex; align-items:center; gap:6px;}
+  .badge-chip.locked{border-color:var(--line); color:var(--concrete); opacity:0.5;}
 
   .iap-card{background:var(--bg-card); border:1px dashed var(--line); border-radius:8px; padding:12px; text-align:center; margin-top:10px;}
   .iap-card b{font-family:'Oswald',sans-serif; text-transform:uppercase; font-size:13px;}
@@ -271,12 +280,37 @@
     <div class="car-name-tag">Now crushing: <b id="carName">Rusty Sedan</b></div>
     <div class="car-stage">
       <div class="car-visual" id="carVisual">
-        <svg id="carSvg" viewBox="0 0 400 210" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Car to smash">
+        <svg id="carSvg" viewBox="0 0 400 210" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="Vehicle to smash">
           <defs>
             <linearGradient id="gradMetal" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#ff8a54"/>
               <stop offset="55%" stop-color="#c1502e"/>
               <stop offset="100%" stop-color="#8f3a20"/>
+            </linearGradient>
+            <linearGradient id="gradMetal2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#7d8892"/>
+              <stop offset="55%" stop-color="#4a5560"/>
+              <stop offset="100%" stop-color="#2b333b"/>
+            </linearGradient>
+            <linearGradient id="gradMetal3" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#f4d35e"/>
+              <stop offset="55%" stop-color="#d1a324"/>
+              <stop offset="100%" stop-color="#8f6d12"/>
+            </linearGradient>
+            <linearGradient id="gradMetal4" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#5fb88a"/>
+              <stop offset="55%" stop-color="#2f7d54"/>
+              <stop offset="100%" stop-color="#1a4d32"/>
+            </linearGradient>
+            <linearGradient id="gradMetal5" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ffcf5c"/>
+              <stop offset="55%" stop-color="#e8a730"/>
+              <stop offset="100%" stop-color="#a06d10"/>
+            </linearGradient>
+            <linearGradient id="gradMetal6" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#e2554a"/>
+              <stop offset="55%" stop-color="#b8291d"/>
+              <stop offset="100%" stop-color="#7a1710"/>
             </linearGradient>
             <linearGradient id="gradGlass" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#e3f3fa"/>
@@ -288,41 +322,7 @@
             </radialGradient>
           </defs>
           <ellipse cx="200" cy="196" rx="178" ry="9" fill="#000" opacity="0.35"/>
-          <path d="M18,150 Q18,118 55,112 Q75,70 115,64 Q150,40 210,42 Q265,44 292,68 Q335,72 355,110 Q378,116 378,150 Q378,168 358,168 L342,168 Q342,140 314,140 Q286,140 286,168 L114,168 Q114,140 86,140 Q58,140 58,168 L38,168 Q18,168 18,150 Z" fill="url(#gradMetal)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
-          <g class="zone" data-zone="hood" data-type="metal" role="button" aria-label="Hood" tabindex="0">
-            <path d="M22,150 Q22,122 56,116 Q66,110 95,108 L95,150 Z" fill="url(#gradMetal)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
-          </g>
-          <g class="zone" data-zone="windshield" data-type="glass" role="button" aria-label="Windshield" tabindex="0">
-            <path d="M97,108 Q108,74 133,64 Q145,60 158,60 L158,108 Z" fill="url(#gradGlass)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
-            <g class="crack-lines"><path d="M118 85 L130 100 L122 108" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M138 78 L146 100" stroke="#ffffff" stroke-width="2" fill="none"/></g>
-          </g>
-          <g class="zone" data-zone="roof" data-type="metal" role="button" aria-label="Roof" tabindex="0">
-            <path d="M160,60 Q185,46 215,46 Q245,46 262,60 L262,66 L160,66 Z" fill="url(#gradMetal)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
-          </g>
-          <g class="zone" data-zone="frontDoor" data-type="metal" role="button" aria-label="Front door" tabindex="0">
-            <rect x="97" y="110" width="88" height="40" rx="4" fill="url(#gradMetal)" stroke="#14161a" stroke-width="3"/>
-            <line x1="140" y1="118" x2="140" y2="146" stroke="#14161a" stroke-width="2"/>
-            <circle cx="168" cy="130" r="2.5" fill="#14161a"/>
-          </g>
-          <g class="zone" data-zone="rearWindow" data-type="glass" role="button" aria-label="Rear window" tabindex="0">
-            <path d="M160,66 L262,66 Q272,80 278,108 L188,108 Q184,86 160,66 Z" fill="url(#gradGlass)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
-            <g class="crack-lines"><path d="M205 84 L218 102 L208 110" stroke="#ffffff" stroke-width="2" fill="none"/></g>
-          </g>
-          <g class="zone" data-zone="rearDoor" data-type="metal" role="button" aria-label="Rear door" tabindex="0">
-            <rect x="185" y="110" width="88" height="40" rx="4" fill="url(#gradMetal)" stroke="#14161a" stroke-width="3"/>
-            <circle cx="255" cy="130" r="2.5" fill="#14161a"/>
-          </g>
-          <g class="zone" data-zone="trunk" data-type="metal" role="button" aria-label="Trunk" tabindex="0">
-            <path d="M275,108 L278,108 Q332,110 350,128 Q356,136 356,150 L275,150 Z" fill="url(#gradMetal)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
-          </g>
-          <g class="zone" data-zone="frontTire" data-type="tire" role="button" aria-label="Front tire" tabindex="0">
-            <circle cx="98" cy="168" r="28" fill="url(#gradTire)" stroke="#14161a" stroke-width="3"/>
-            <g class="wheel-rim"><circle cx="98" cy="168" r="12" fill="#8a8d8a"/><line x1="98" y1="158" x2="98" y2="178" stroke="#4a4d4a" stroke-width="2"/><line x1="88" y1="168" x2="108" y2="168" stroke="#4a4d4a" stroke-width="2"/></g>
-          </g>
-          <g class="zone" data-zone="rearTire" data-type="tire" role="button" aria-label="Rear tire" tabindex="0">
-            <circle cx="308" cy="168" r="28" fill="url(#gradTire)" stroke="#14161a" stroke-width="3"/>
-            <g class="wheel-rim"><circle cx="308" cy="168" r="12" fill="#8a8d8a"/><line x1="308" y1="158" x2="308" y2="178" stroke="#4a4d4a" stroke-width="2"/><line x1="298" y1="168" x2="318" y2="168" stroke="#4a4d4a" stroke-width="2"/></g>
-          </g>
+          <g id="carBody"></g>
         </svg>
       </div>
       <div class="combo-wrap" id="comboWrap"><div class="combo-ring"></div><div class="combo-badge" id="comboBadge">COMBO ×1</div></div>
@@ -364,6 +364,15 @@
       <div id="leaderboardList"></div>
       <div class="lb-note">Simulated rivals for now — a real global leaderboard needs a backend (e.g. Firebase or Play Games Services) wired into your Capacitor app.</div>
     </div>
+    <div class="panel">
+      <h2>Scrap Centers</h2>
+      <div id="centersList" class="centers-row"></div>
+      <div class="lb-note">Every center you open stays visible here as a record of how far you'd gotten — nothing is ever hidden or deleted.</div>
+    </div>
+    <div class="panel">
+      <h2>Achievements</h2>
+      <div id="achievementsList" class="badge-row"></div>
+    </div>
   </div>
 </div>
 
@@ -394,12 +403,137 @@
   const AVATARS = ["🧔","👷","🧑‍🔧","👩‍🔧","🤖","🦾","🧑‍🚀","👨‍🔬"];
 
   const CAR_TIERS = [
-    {name:"Rusty Sedan",  emoji:"🚗", hp:8,    reward:8},
-    {name:"Pickup Truck", emoji:"🛻", hp:42,   reward:38},
-    {name:"SUV Beast",    emoji:"🚙", hp:175,  reward:160},
-    {name:"Cargo Van",    emoji:"🚐", hp:640,  reward:600},
-    {name:"City Bus",     emoji:"🚌", hp:2200, reward:2100},
-    {name:"Mega Truck",   emoji:"🚛", hp:7500, reward:7200},
+    {
+      name:"Meridian Sedan", hp:8, reward:8,
+      zones:["hood","windshield","roof","frontDoor","rearWindow","rearDoor","trunk","frontTire","rearTire"],
+      bodyMarkup: `
+        <path d="M18,150 Q18,118 55,112 Q75,70 115,64 Q150,40 210,42 Q265,44 292,68 Q335,72 355,110 Q378,116 378,150 Q378,168 358,168 L342,168 Q342,140 314,140 Q286,140 286,168 L114,168 Q114,140 86,140 Q58,140 58,168 L38,168 Q18,168 18,150 Z" fill="url(#gradMetal)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
+        <g class="zone" data-zone="hood" data-type="metal" role="button" aria-label="Hood" tabindex="0"><path d="M22,150 Q22,122 56,116 Q66,110 95,108 L95,150 Z" fill="url(#gradMetal)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/></g>
+        <g class="zone" data-zone="windshield" data-type="glass" role="button" aria-label="Windshield" tabindex="0">
+          <path d="M97,108 Q108,74 133,64 Q145,60 158,60 L158,108 Z" fill="url(#gradGlass)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
+          <g class="crack-lines"><path d="M118 85 L130 100 L122 108" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M138 78 L146 100" stroke="#ffffff" stroke-width="2" fill="none"/></g>
+        </g>
+        <g class="zone" data-zone="roof" data-type="metal" role="button" aria-label="Roof" tabindex="0"><path d="M160,60 Q185,46 215,46 Q245,46 262,60 L262,66 L160,66 Z" fill="url(#gradMetal)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/></g>
+        <g class="zone" data-zone="frontDoor" data-type="metal" role="button" aria-label="Front door" tabindex="0"><rect x="97" y="110" width="88" height="40" rx="4" fill="url(#gradMetal)" stroke="#14161a" stroke-width="3"/><line x1="140" y1="118" x2="140" y2="146" stroke="#14161a" stroke-width="2"/><circle cx="168" cy="130" r="2.5" fill="#14161a"/></g>
+        <g class="zone" data-zone="rearWindow" data-type="glass" role="button" aria-label="Rear window" tabindex="0">
+          <path d="M160,66 L262,66 Q272,80 278,108 L188,108 Q184,86 160,66 Z" fill="url(#gradGlass)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
+          <g class="crack-lines"><path d="M205 84 L218 102 L208 110" stroke="#ffffff" stroke-width="2" fill="none"/></g>
+        </g>
+        <g class="zone" data-zone="rearDoor" data-type="metal" role="button" aria-label="Rear door" tabindex="0"><rect x="185" y="110" width="88" height="40" rx="4" fill="url(#gradMetal)" stroke="#14161a" stroke-width="3"/><circle cx="255" cy="130" r="2.5" fill="#14161a"/></g>
+        <g class="zone" data-zone="trunk" data-type="metal" role="button" aria-label="Trunk" tabindex="0"><path d="M275,108 L278,108 Q332,110 350,128 Q356,136 356,150 L275,150 Z" fill="url(#gradMetal)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/></g>
+        <g class="zone" data-zone="frontTire" data-type="tire" role="button" aria-label="Front tire" tabindex="0"><circle cx="98" cy="168" r="28" fill="url(#gradTire)" stroke="#14161a" stroke-width="3"/><g class="wheel-rim"><circle cx="98" cy="168" r="12" fill="#8a8d8a"/><line x1="98" y1="158" x2="98" y2="178" stroke="#4a4d4a" stroke-width="2"/><line x1="88" y1="168" x2="108" y2="168" stroke="#4a4d4a" stroke-width="2"/></g></g>
+        <g class="zone" data-zone="rearTire" data-type="tire" role="button" aria-label="Rear tire" tabindex="0"><circle cx="308" cy="168" r="28" fill="url(#gradTire)" stroke="#14161a" stroke-width="3"/><g class="wheel-rim"><circle cx="308" cy="168" r="12" fill="#8a8d8a"/><line x1="308" y1="158" x2="308" y2="178" stroke="#4a4d4a" stroke-width="2"/><line x1="298" y1="168" x2="318" y2="168" stroke="#4a4d4a" stroke-width="2"/></g></g>
+      `
+    },
+    {
+      name:"Backcountry Pickup", hp:42, reward:38,
+      zones:["hood","windshield","roof","door","bed","frontTire","rearTire"],
+      bodyMarkup: `
+        <path d="M20,150 Q20,120 60,114 L365,114 Q368,120 368,150 L20,150 Z" fill="url(#gradMetal2)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
+        <g class="zone" data-zone="hood" data-type="metal" role="button" aria-label="Hood" tabindex="0"><path d="M22,150 Q22,124 50,118 Q60,114 72,112 L72,150 Z" fill="url(#gradMetal2)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/></g>
+        <g class="zone" data-zone="windshield" data-type="glass" role="button" aria-label="Windshield" tabindex="0">
+          <path d="M74,112 Q84,80 100,68 L124,68 L124,112 Z" fill="url(#gradGlass)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
+          <g class="crack-lines"><path d="M92 88 L104 100 L96 110" stroke="#ffffff" stroke-width="2" fill="none"/></g>
+        </g>
+        <g class="zone" data-zone="roof" data-type="metal" role="button" aria-label="Cab roof" tabindex="0"><rect x="100" y="58" width="55" height="14" rx="4" fill="url(#gradMetal2)" stroke="#14161a" stroke-width="3"/></g>
+        <g class="zone" data-zone="door" data-type="metal" role="button" aria-label="Cab door" tabindex="0"><rect x="126" y="112" width="60" height="38" fill="url(#gradMetal2)" stroke="#14161a" stroke-width="3"/><circle cx="170" cy="130" r="2.5" fill="#14161a"/></g>
+        <g class="zone" data-zone="bed" data-type="metal" role="button" aria-label="Cargo bed" tabindex="0">
+          <rect x="188" y="118" width="175" height="32" rx="4" fill="url(#gradMetal2)" stroke="#14161a" stroke-width="3"/>
+          <line x1="188" y1="122" x2="363" y2="122" stroke="#14161a" stroke-width="2" opacity="0.5"/>
+        </g>
+        <g class="zone" data-zone="frontTire" data-type="tire" role="button" aria-label="Front tire" tabindex="0"><circle cx="100" cy="168" r="26" fill="url(#gradTire)" stroke="#14161a" stroke-width="3"/><g class="wheel-rim"><circle cx="100" cy="168" r="11" fill="#8a8d8a"/><line x1="100" y1="159" x2="100" y2="177" stroke="#4a4d4a" stroke-width="2"/><line x1="91" y1="168" x2="109" y2="168" stroke="#4a4d4a" stroke-width="2"/></g></g>
+        <g class="zone" data-zone="rearTire" data-type="tire" role="button" aria-label="Rear tire" tabindex="0"><circle cx="305" cy="168" r="26" fill="url(#gradTire)" stroke="#14161a" stroke-width="3"/><g class="wheel-rim"><circle cx="305" cy="168" r="11" fill="#8a8d8a"/><line x1="305" y1="159" x2="305" y2="177" stroke="#4a4d4a" stroke-width="2"/><line x1="296" y1="168" x2="314" y2="168" stroke="#4a4d4a" stroke-width="2"/></g></g>
+      `
+    },
+    {
+      name:"Highland SUV", hp:175, reward:160,
+      zones:["hood","windshield","roof","frontDoor","rearWindow","rearDoor","trunk","frontTire","rearTire"],
+      bodyMarkup: `
+        <path d="M16,152 Q16,110 60,104 Q80,58 125,52 Q155,34 215,36 Q270,38 298,60 Q345,64 362,104 Q382,110 382,152 Q382,170 362,170 L346,170 Q346,142 318,142 Q290,142 290,170 L108,170 Q108,142 80,142 Q52,142 52,170 L36,170 Q16,170 16,152 Z" fill="url(#gradMetal3)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
+        <line x1="120" y1="46" x2="270" y2="46" stroke="#2b2109" stroke-width="4" opacity="0.5"/>
+        <g class="zone" data-zone="hood" data-type="metal" role="button" aria-label="Hood" tabindex="0"><path d="M20,152 Q20,116 58,108 Q68,102 98,100 L98,152 Z" fill="url(#gradMetal3)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/></g>
+        <g class="zone" data-zone="windshield" data-type="glass" role="button" aria-label="Windshield" tabindex="0">
+          <path d="M100,100 Q110,64 138,54 Q150,50 163,50 L163,100 Z" fill="url(#gradGlass)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
+          <g class="crack-lines"><path d="M122 76 L134 92 L126 100" stroke="#ffffff" stroke-width="2" fill="none"/></g>
+        </g>
+        <g class="zone" data-zone="roof" data-type="metal" role="button" aria-label="Roof" tabindex="0"><path d="M165,50 Q192,38 220,38 Q252,38 268,50 L268,58 L165,58 Z" fill="url(#gradMetal3)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/></g>
+        <g class="zone" data-zone="frontDoor" data-type="metal" role="button" aria-label="Front door" tabindex="0"><rect x="100" y="102" width="88" height="48" rx="4" fill="url(#gradMetal3)" stroke="#14161a" stroke-width="3"/><line x1="144" y1="110" x2="144" y2="144" stroke="#14161a" stroke-width="2"/></g>
+        <g class="zone" data-zone="rearWindow" data-type="glass" role="button" aria-label="Rear window" tabindex="0">
+          <path d="M165,58 L268,58 Q278,72 284,100 L192,100 Q188,78 165,58 Z" fill="url(#gradGlass)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
+          <g class="crack-lines"><path d="M210 76 L224 92 L214 100" stroke="#ffffff" stroke-width="2" fill="none"/></g>
+        </g>
+        <g class="zone" data-zone="rearDoor" data-type="metal" role="button" aria-label="Rear door" tabindex="0"><rect x="190" y="102" width="88" height="48" fill="url(#gradMetal3)" stroke="#14161a" stroke-width="3"/></g>
+        <g class="zone" data-zone="trunk" data-type="metal" role="button" aria-label="Trunk" tabindex="0"><path d="M280,100 L284,100 Q338,102 356,120 Q362,128 362,152 L280,152 Z" fill="url(#gradMetal3)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/></g>
+        <g class="zone" data-zone="frontTire" data-type="tire" role="button" aria-label="Front tire" tabindex="0"><circle cx="100" cy="170" r="30" fill="url(#gradTire)" stroke="#14161a" stroke-width="3"/><g class="wheel-rim"><circle cx="100" cy="170" r="13" fill="#8a8d8a"/><line x1="100" y1="159" x2="100" y2="181" stroke="#4a4d4a" stroke-width="2"/><line x1="89" y1="170" x2="111" y2="170" stroke="#4a4d4a" stroke-width="2"/></g></g>
+        <g class="zone" data-zone="rearTire" data-type="tire" role="button" aria-label="Rear tire" tabindex="0"><circle cx="312" cy="170" r="30" fill="url(#gradTire)" stroke="#14161a" stroke-width="3"/><g class="wheel-rim"><circle cx="312" cy="170" r="13" fill="#8a8d8a"/><line x1="312" y1="159" x2="312" y2="181" stroke="#4a4d4a" stroke-width="2"/><line x1="301" y1="170" x2="323" y2="170" stroke="#4a4d4a" stroke-width="2"/></g></g>
+      `
+    },
+    {
+      name:"Driftwood Cargo Van", hp:640, reward:600,
+      zones:["frontPanel","windshield","roof","sidePanel","rearDoors","frontTire","rearTire"],
+      bodyMarkup: `
+        <path d="M18,165 L18,72 Q18,60 32,60 L360,60 Q372,60 372,72 L372,165 Z" fill="url(#gradMetal4)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
+        <g class="zone" data-zone="frontPanel" data-type="metal" role="button" aria-label="Front panel" tabindex="0"><path d="M20,165 L20,88 Q20,72 36,72 L58,72 L58,165 Z" fill="url(#gradMetal4)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/></g>
+        <g class="zone" data-zone="windshield" data-type="glass" role="button" aria-label="Windshield" tabindex="0">
+          <path d="M60,72 L92,72 L92,120 L60,120 Z" fill="url(#gradGlass)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
+          <g class="crack-lines"><path d="M70 88 L82 102 L74 118" stroke="#ffffff" stroke-width="2" fill="none"/></g>
+        </g>
+        <g class="zone" data-zone="roof" data-type="metal" role="button" aria-label="Roof" tabindex="0"><rect x="60" y="62" width="308" height="10" fill="url(#gradMetal4)" stroke="#14161a" stroke-width="3"/></g>
+        <g class="zone" data-zone="sidePanel" data-type="metal" role="button" aria-label="Side panel" tabindex="0">
+          <rect x="94" y="72" width="180" height="93" fill="url(#gradMetal4)" stroke="#14161a" stroke-width="3"/>
+          <rect x="104" y="82" width="60" height="34" rx="3" fill="url(#gradGlass)" stroke="#14161a" stroke-width="2"/>
+          <line x1="230" y1="72" x2="230" y2="165" stroke="#14161a" stroke-width="2" opacity="0.6"/>
+        </g>
+        <g class="zone" data-zone="rearDoors" data-type="metal" role="button" aria-label="Rear doors" tabindex="0"><rect x="276" y="72" width="94" height="93" fill="url(#gradMetal4)" stroke="#14161a" stroke-width="3"/><line x1="323" y1="72" x2="323" y2="165" stroke="#14161a" stroke-width="2" opacity="0.6"/></g>
+        <g class="zone" data-zone="frontTire" data-type="tire" role="button" aria-label="Front tire" tabindex="0"><circle cx="95" cy="168" r="26" fill="url(#gradTire)" stroke="#14161a" stroke-width="3"/><g class="wheel-rim"><circle cx="95" cy="168" r="11" fill="#8a8d8a"/><line x1="95" y1="159" x2="95" y2="177" stroke="#4a4d4a" stroke-width="2"/><line x1="86" y1="168" x2="104" y2="168" stroke="#4a4d4a" stroke-width="2"/></g></g>
+        <g class="zone" data-zone="rearTire" data-type="tire" role="button" aria-label="Rear tire" tabindex="0"><circle cx="305" cy="168" r="26" fill="url(#gradTire)" stroke="#14161a" stroke-width="3"/><g class="wheel-rim"><circle cx="305" cy="168" r="11" fill="#8a8d8a"/><line x1="305" y1="159" x2="305" y2="177" stroke="#4a4d4a" stroke-width="2"/><line x1="296" y1="168" x2="314" y2="168" stroke="#4a4d4a" stroke-width="2"/></g></g>
+      `
+    },
+    {
+      name:"Harborline Transit Bus", hp:2200, reward:2100,
+      zones:["windshield","roof","sideWindow1","sideWindow2","lowerPanel","rear","frontTire","rearTire"],
+      bodyMarkup: `
+        <path d="M18,168 L18,68 Q18,58 30,58 L370,58 Q382,58 382,68 L382,168 Z" fill="url(#gradMetal5)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
+        <g class="zone" data-zone="windshield" data-type="glass" role="button" aria-label="Windshield" tabindex="0">
+          <path d="M20,168 L20,84 Q20,70 34,70 L58,70 L58,168 Z" fill="url(#gradGlass)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
+          <g class="crack-lines"><path d="M32 100 L44 116 L36 130" stroke="#ffffff" stroke-width="2" fill="none"/></g>
+        </g>
+        <g class="zone" data-zone="roof" data-type="metal" role="button" aria-label="Roof" tabindex="0"><rect x="58" y="60" width="322" height="10" fill="url(#gradMetal5)" stroke="#14161a" stroke-width="3"/></g>
+        <g class="zone" data-zone="sideWindow1" data-type="glass" role="button" aria-label="Front side window" tabindex="0">
+          <rect x="62" y="76" width="95" height="40" rx="4" fill="url(#gradGlass)" stroke="#14161a" stroke-width="3"/>
+          <g class="crack-lines"><path d="M90 88 L100 100 L92 112" stroke="#ffffff" stroke-width="2" fill="none"/></g>
+        </g>
+        <g class="zone" data-zone="sideWindow2" data-type="glass" role="button" aria-label="Rear side window" tabindex="0">
+          <rect x="163" y="76" width="130" height="40" rx="4" fill="url(#gradGlass)" stroke="#14161a" stroke-width="3"/>
+          <g class="crack-lines"><path d="M210 88 L222 100 L212 112" stroke="#ffffff" stroke-width="2" fill="none"/></g>
+        </g>
+        <g class="zone" data-zone="lowerPanel" data-type="metal" role="button" aria-label="Lower body panel" tabindex="0">
+          <rect x="62" y="120" width="231" height="48" fill="url(#gradMetal5)" stroke="#14161a" stroke-width="3"/>
+          <rect x="80" y="130" width="40" height="28" rx="3" fill="#2b333b" stroke="#14161a" stroke-width="2"/>
+        </g>
+        <g class="zone" data-zone="rear" data-type="metal" role="button" aria-label="Rear panel" tabindex="0"><rect x="297" y="76" width="83" height="92" fill="url(#gradMetal5)" stroke="#14161a" stroke-width="3"/></g>
+        <g class="zone" data-zone="frontTire" data-type="tire" role="button" aria-label="Front tire" tabindex="0"><circle cx="95" cy="170" r="26" fill="url(#gradTire)" stroke="#14161a" stroke-width="3"/><g class="wheel-rim"><circle cx="95" cy="170" r="11" fill="#8a8d8a"/><line x1="95" y1="161" x2="95" y2="179" stroke="#4a4d4a" stroke-width="2"/><line x1="86" y1="170" x2="104" y2="170" stroke="#4a4d4a" stroke-width="2"/></g></g>
+        <g class="zone" data-zone="rearTire" data-type="tire" role="button" aria-label="Rear tire" tabindex="0"><circle cx="320" cy="170" r="26" fill="url(#gradTire)" stroke="#14161a" stroke-width="3"/><g class="wheel-rim"><circle cx="320" cy="170" r="11" fill="#8a8d8a"/><line x1="320" y1="161" x2="320" y2="179" stroke="#4a4d4a" stroke-width="2"/><line x1="311" y1="170" x2="329" y2="170" stroke="#4a4d4a" stroke-width="2"/></g></g>
+      `
+    },
+    {
+      name:"Ironclad Mega Hauler", hp:7500, reward:7200,
+      zones:["hood","windshield","cabRoof","cabDoor","trailerFront","trailerRear","steerTire","trailerTire1","trailerTire2"],
+      bodyMarkup: `
+        <g class="zone" data-zone="hood" data-type="metal" role="button" aria-label="Hood" tabindex="0"><path d="M20,165 Q20,132 40,124 Q48,120 58,118 L58,165 Z" fill="url(#gradMetal6)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/></g>
+        <g class="zone" data-zone="windshield" data-type="glass" role="button" aria-label="Windshield" tabindex="0">
+          <path d="M60,118 Q68,86 84,76 L104,76 L104,118 Z" fill="url(#gradGlass)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
+          <g class="crack-lines"><path d="M76 94 L86 106 L78 116" stroke="#ffffff" stroke-width="2" fill="none"/></g>
+        </g>
+        <g class="zone" data-zone="cabRoof" data-type="metal" role="button" aria-label="Cab roof" tabindex="0"><rect x="84" y="66" width="45" height="12" rx="3" fill="url(#gradMetal6)" stroke="#14161a" stroke-width="3"/></g>
+        <g class="zone" data-zone="cabDoor" data-type="metal" role="button" aria-label="Cab door" tabindex="0"><rect x="106" y="118" width="42" height="47" fill="url(#gradMetal6)" stroke="#14161a" stroke-width="3"/><circle cx="140" cy="140" r="2.5" fill="#14161a"/></g>
+        <g class="zone" data-zone="trailerFront" data-type="metal" role="button" aria-label="Trailer front" tabindex="0"><rect x="156" y="70" width="115" height="95" fill="url(#gradMetal2)" stroke="#14161a" stroke-width="3"/><line x1="213" y1="70" x2="213" y2="165" stroke="#14161a" stroke-width="1.5" opacity="0.4"/></g>
+        <g class="zone" data-zone="trailerRear" data-type="metal" role="button" aria-label="Trailer rear" tabindex="0"><rect x="273" y="70" width="105" height="95" fill="url(#gradMetal2)" stroke="#14161a" stroke-width="3"/><line x1="325" y1="70" x2="325" y2="165" stroke="#14161a" stroke-width="1.5" opacity="0.4"/></g>
+        <g class="zone" data-zone="steerTire" data-type="tire" role="button" aria-label="Steer tire" tabindex="0"><circle cx="88" cy="168" r="24" fill="url(#gradTire)" stroke="#14161a" stroke-width="3"/><g class="wheel-rim"><circle cx="88" cy="168" r="10" fill="#8a8d8a"/><line x1="88" y1="158" x2="88" y2="178" stroke="#4a4d4a" stroke-width="2"/><line x1="78" y1="168" x2="98" y2="168" stroke="#4a4d4a" stroke-width="2"/></g></g>
+        <g class="zone" data-zone="trailerTire1" data-type="tire" role="button" aria-label="Trailer tire" tabindex="0"><circle cx="222" cy="168" r="26" fill="url(#gradTire)" stroke="#14161a" stroke-width="3"/><g class="wheel-rim"><circle cx="222" cy="168" r="11" fill="#8a8d8a"/><line x1="222" y1="159" x2="222" y2="177" stroke="#4a4d4a" stroke-width="2"/><line x1="213" y1="168" x2="231" y2="168" stroke="#4a4d4a" stroke-width="2"/></g></g>
+        <g class="zone" data-zone="trailerTire2" data-type="tire" role="button" aria-label="Trailer tire" tabindex="0"><circle cx="335" cy="168" r="26" fill="url(#gradTire)" stroke="#14161a" stroke-width="3"/><g class="wheel-rim"><circle cx="335" cy="168" r="11" fill="#8a8d8a"/><line x1="335" y1="159" x2="335" y2="177" stroke="#4a4d4a" stroke-width="2"/><line x1="326" y1="168" x2="344" y2="168" stroke="#4a4d4a" stroke-width="2"/></g></g>
+      `
+    },
   ];
 
   const MILESTONES = [
@@ -429,7 +563,6 @@
     {name:"CrusherDave", base:600, rate:0.5},
   ];
 
-  const ZONE_IDS = ["hood","windshield","roof","frontDoor","rearWindow","rearDoor","trunk","frontTire","rearTire"];
   const ZONE_META = {
     metal:{base:"#c1502e", damaged:"#4a2013"},
     glass:{base:"#bcd9e6", damaged:"#7d8286"},
@@ -446,10 +579,10 @@
     scrap:0, totalEarned:0, clickLevel:0, owned:{}, reputation:0, gems:0,
     carsDestroyed:0, milestoneIndex:0, carHp:CAR_TIERS[0].hp, carMaxHp:CAR_TIERS[0].hp,
     zoneDamage:{}, muted:false, musicMuted:false, lastActive:Date.now(), firstLaunch:Date.now(),
-    dailyQuests:[], questsDate:null, boostUntil:0, saveFailCount:0,
+    dailyQuests:[], questsDate:null, boostUntil:0, saveFailCount:0, centerLog:[],
   };
   MACHINES.forEach(m => state.owned[m.id] = 0);
-  ZONE_IDS.forEach(z => state.zoneDamage[z] = 0);
+  CAR_TIERS[0].zones.forEach(z => state.zoneDamage[z] = 0);
 
   let comboCount = 0, lastTapTime = 0, comboResetTimer = null;
   let selectedAvatar = AVATARS[0];
@@ -581,63 +714,97 @@
       o.connect(g).connect(ctx.destination); o.start(t0); o.stop(t0+0.3);
     });
   }
-  function vibrate(pattern){ try{ if(navigator.vibrate) navigator.vibrate(pattern); }catch(e){} }
+  function vibrate(pattern){
+    try{
+      if(state.muted) return; // haptics follow the SFX mute toggle
+      if(navigator.vibrate) navigator.vibrate(pattern);
+    }catch(e){}
+  }
+  // distinct feel per zone type: glass = a quick sharp tick, metal = a solid punch,
+  // tire = a stubby double-thud
+  function vibrateForZone(type){
+    if(type === "glass") vibrate(10);
+    else if(type === "tire") vibrate([12,8,12]);
+    else vibrate(22);
+  }
 
-  // ---------- audio: procedural sci-fi/techno background music (point: background music) ----------
-  let musicGain = null, musicOn = false, musicScheduler = null, nextNoteTime = 0, currentStep = 0;
-  const BPM = 128, STEP_DUR = 60/BPM/4;
-  const BASS_PATTERN = [0,3,0,3,5,3,0,3, 0,3,0,3,7,5,3,0];
-  const ROOT = 110;
-  function noteFreq(step){ return ROOT * Math.pow(2, BASS_PATTERN[step % BASS_PATTERN.length]/12); }
+  // ---------- audio: low, driving, metal-leaning background loop ----------
+  // A steady distorted power-chord riff + a deep sustained drone underneath it,
+  // kept low in the mix and free of the high blippy tones that sounded "funny" before.
+  let musicGain = null, musicDistortion = null, musicTone = null, musicOn = false, musicScheduler = null;
+  let nextNoteTime = 0, currentStep = 0, droneOsc = null, droneGain = null;
+  const BPM = 100, STEP_DUR = 60/BPM/2;
+  const RIFF_PATTERN = [0,0,7,0, 0,0,10,7];
+  const ROOT = 41.2; // low E1 — deep, grounded root note
+  function makeDistortionCurve(amount){
+    const k = amount, n = 8192, curve = new Float32Array(n), deg = Math.PI/180;
+    for(let i=0;i<n;i++){ const x = i*2/n - 1; curve[i] = (3+k)*x*20*deg / (Math.PI + k*Math.abs(x)); }
+    return curve;
+  }
+  function riffFreq(step, interval){ return ROOT * Math.pow(2, (RIFF_PATTERN[step % RIFF_PATTERN.length] + interval)/12); }
   function scheduleStep(time, step){
     const ctx = ensureAudio(); if(!ctx || !musicGain) return;
+    // deep kick on the downbeats for a steady, motivating pulse
     if(step % 4 === 0){
       const o = ctx.createOscillator(); const g = ctx.createGain();
-      o.type="sine"; o.frequency.setValueAtTime(120, time); o.frequency.exponentialRampToValueAtTime(35, time+0.12);
-      g.gain.setValueAtTime(0.32, time); g.gain.exponentialRampToValueAtTime(0.001, time+0.16);
-      o.connect(g).connect(musicGain); o.start(time); o.stop(time+0.18);
+      o.type="sine"; o.frequency.setValueAtTime(110, time); o.frequency.exponentialRampToValueAtTime(38, time+0.14);
+      g.gain.setValueAtTime(0.34, time); g.gain.exponentialRampToValueAtTime(0.001, time+0.2);
+      o.connect(g).connect(musicGain); o.start(time); o.stop(time+0.22);
     }
+    // subtle hi-hat, kept quiet so it never dominates
     if(step % 2 === 1){
-      const bufferSize = Math.floor(ctx.sampleRate*0.04);
+      const bufferSize = Math.floor(ctx.sampleRate*0.03);
       const buf = ctx.createBuffer(1,bufferSize,ctx.sampleRate);
       const d = buf.getChannelData(0);
       for(let i=0;i<bufferSize;i++) d[i] = (Math.random()*2-1)*(1-i/bufferSize);
       const src = ctx.createBufferSource(); src.buffer=buf;
-      const hp = ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=6000;
-      const g = ctx.createGain(); g.gain.setValueAtTime(0.07, time);
+      const hp = ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=7000;
+      const g = ctx.createGain(); g.gain.setValueAtTime(0.03, time);
       src.connect(hp).connect(g).connect(musicGain); src.start(time);
     }
-    const o2 = ctx.createOscillator(); const g2 = ctx.createGain(); const filt = ctx.createBiquadFilter();
-    o2.type="sawtooth"; o2.frequency.value = noteFreq(step);
-    filt.type="lowpass"; filt.frequency.value = 900;
-    g2.gain.setValueAtTime(0.001, time); g2.gain.linearRampToValueAtTime(0.08, time+0.02); g2.gain.exponentialRampToValueAtTime(0.001, time+STEP_DUR*0.9);
-    o2.connect(filt).connect(g2).connect(musicGain); o2.start(time); o2.stop(time+STEP_DUR);
-    if(Math.random() < 0.08){
-      const o3=ctx.createOscillator(); const g3=ctx.createGain();
-      o3.type="square"; o3.frequency.setValueAtTime(1800+Math.random()*1200, time);
-      o3.frequency.exponentialRampToValueAtTime(600, time+0.15);
-      g3.gain.setValueAtTime(0.045, time); g3.gain.exponentialRampToValueAtTime(0.001, time+0.15);
-      o3.connect(g3).connect(musicGain); o3.start(time); o3.stop(time+0.15);
-    }
+    // distorted power chord (root + fifth) — the "metal" character, routed through
+    // a shared distortion + lowpass so it stays gritty but never harsh/shrill
+    const env = ctx.createGain();
+    env.gain.setValueAtTime(0.001, time);
+    env.gain.linearRampToValueAtTime(0.16, time+0.015);
+    env.gain.exponentialRampToValueAtTime(0.001, time + STEP_DUR*0.85);
+    env.connect(musicDistortion);
+    const oRoot = ctx.createOscillator(); oRoot.type="sawtooth"; oRoot.frequency.value = riffFreq(step, 0);
+    const oFifth = ctx.createOscillator(); oFifth.type="sawtooth"; oFifth.frequency.value = riffFreq(step, 7);
+    oRoot.connect(env); oFifth.connect(env);
+    oRoot.start(time); oRoot.stop(time+STEP_DUR);
+    oFifth.start(time); oFifth.stop(time+STEP_DUR);
   }
   function musicLoop(){
     const ctx = ensureAudio(); if(!ctx) return;
     while(nextNoteTime < ctx.currentTime + 0.15){
       scheduleStep(nextNoteTime, currentStep);
       nextNoteTime += STEP_DUR;
-      currentStep = (currentStep+1) % BASS_PATTERN.length;
+      currentStep = (currentStep+1) % RIFF_PATTERN.length;
     }
   }
   function startMusic(){
     if(musicOn || state.musicMuted) return;
     const ctx = ensureAudio(); if(!ctx) return;
-    if(!musicGain){ musicGain = ctx.createGain(); musicGain.gain.value = 0.5; musicGain.connect(ctx.destination); }
+    if(!musicGain){
+      musicGain = ctx.createGain(); musicGain.gain.value = 0.42;
+      musicTone = ctx.createBiquadFilter(); musicTone.type = "lowpass"; musicTone.frequency.value = 1600;
+      musicDistortion = ctx.createWaveShaper(); musicDistortion.curve = makeDistortionCurve(26); musicDistortion.oversample = "2x";
+      musicDistortion.connect(musicTone); musicTone.connect(musicGain); musicGain.connect(ctx.destination);
+    }
+    // constant low drone underneath the riff — the "dominating but low" mechanical hum
+    droneOsc = ctx.createOscillator(); droneOsc.type="sawtooth"; droneOsc.frequency.value = ROOT/2;
+    droneGain = ctx.createGain(); droneGain.gain.value = 0.05;
+    const droneFilter = ctx.createBiquadFilter(); droneFilter.type="lowpass"; droneFilter.frequency.value = 220;
+    droneOsc.connect(droneFilter).connect(droneGain).connect(musicGain);
+    droneOsc.start();
     musicOn = true; nextNoteTime = ctx.currentTime + 0.1; currentStep = 0;
     musicScheduler = setInterval(musicLoop, 60);
   }
   function stopMusic(){
     musicOn = false;
     if(musicScheduler){ clearInterval(musicScheduler); musicScheduler = null; }
+    if(droneOsc){ try{ droneOsc.stop(); }catch(e){} droneOsc = null; }
   }
 
   // ---------- confirm modal (point 1) ----------
@@ -764,6 +931,37 @@
       el.appendChild(d);
     });
   }
+  function renderCenters(){
+    const el = document.getElementById("centersList"); el.innerHTML = "";
+    state.centerLog.forEach((c, i) => {
+      const isActive = i === state.centerLog.length - 1;
+      const d = document.createElement("div");
+      d.className = "center-card" + (isActive ? " active" : "");
+      const dateStr = new Date(c.openedAt).toLocaleDateString();
+      let sub;
+      if(c.statsAtOpen){
+        sub = "Had reached " + fmt(c.statsAtOpen.totalEarned) + "<br>" + c.statsAtOpen.carsDestroyed + " cars crushed";
+      } else {
+        sub = "Your original yard";
+      }
+      d.innerHTML =
+        '<div class="cc-badge">🏭</div>' +
+        '<div class="cc-title">Center #' + c.num + (isActive ? " · Active" : "") + '</div>' +
+        '<div class="cc-sub">Opened ' + dateStr + '<br>' + sub + '</div>';
+      el.appendChild(d);
+    });
+  }
+  function renderAchievements(){
+    const el = document.getElementById("achievementsList"); el.innerHTML = "";
+    for(let i=0;i<Math.max(state.milestoneIndex, 3);i++){
+      const m = getMilestone(i);
+      const earned = i < state.milestoneIndex;
+      const chip = document.createElement("div");
+      chip.className = "badge-chip" + (earned ? "" : " locked");
+      chip.innerHTML = (earned ? "🏅" : "🔒") + " " + m.rank;
+      el.appendChild(chip);
+    }
+  }
   function renderStats(){
     document.getElementById("statScrap").textContent = fmt(state.scrap);
     document.getElementById("statRate").textContent = fmt(ratePerSec()) + "/s";
@@ -813,14 +1011,15 @@
     fill.classList.toggle("low", pct < 0.34);
     document.getElementById("hpText").textContent = Math.round(pct*100) + "%";
     const visual = document.getElementById("carVisual");
-    const scale = 1 + currentTierIndex()*0.05 + Math.min(legendScale(),10)*0.02;
+    const scale = 1 + Math.min(legendScale(),10)*0.02;
     visual.style.transform = "scale(" + scale + ")";
-    visual.style.filter = "hue-rotate(" + (currentTierIndex()*35) + "deg) drop-shadow(0 10px 14px rgba(0,0,0,0.5))";
-    ZONE_IDS.forEach(applyZoneVisual);
+    visual.style.filter = "drop-shadow(0 10px 14px rgba(0,0,0,0.5))";
+    CAR_TIERS[currentTierIndex()].zones.forEach(applyZoneVisual);
   }
   function renderAll(){
     renderMachineList(); renderUpgradeList(); renderStats(); renderCar();
     renderYardMachines(); renderQuestList(); renderLeaderboard(); renderGemShop();
+    renderCenters(); renderAchievements();
     document.getElementById("muteBtn").textContent = state.muted ? "🔇" : "🔊";
     document.getElementById("musicBtn").textContent = state.musicMuted ? "🔇" : "🎵";
   }
@@ -905,12 +1104,17 @@
       } else break;
     }
   }
+  function renderCarBody(tier){
+    document.getElementById("carBody").innerHTML = tier.bodyMarkup;
+  }
   function nextCar(){
     const tier = CAR_TIERS[currentTierIndex()];
     const variance = 0.85 + Math.random()*0.3;
     state.carMaxHp = Math.max(1, Math.round(tier.hp * variance));
     state.carHp = state.carMaxHp;
-    ZONE_IDS.forEach(z => { state.zoneDamage[z] = 0; });
+    state.zoneDamage = {};
+    tier.zones.forEach(z => { state.zoneDamage[z] = 0; });
+    renderCarBody(tier);
   }
 
   function onZoneHit(zoneId, type){
@@ -931,7 +1135,7 @@
     state.zoneDamage[zoneId] = Math.min(1, (state.zoneDamage[zoneId]||0) + 0.35);
     applyZoneVisual(zoneId);
     playZoneSound(type);
-    vibrate(type==="glass" ? 12 : 20);
+    vibrateForZone(type);
     spawnFloat("-" + dmg.toFixed(1), "#ffd27a");
     spawnBits(3, type==="glass" ? ["💎","✨"] : type==="tire" ? ["💨","⚫"] : ["🔩","⚙️"]);
     const visual = document.getElementById("carVisual");
@@ -945,7 +1149,7 @@
       incrementQuest("crush", 1);
       spawnFloat("+" + fmt(reward), "#7fffb0");
       spawnBits(12, ["💥","🔩","⚙️","✨","🧲"]);
-      playCrash(); shakeScreen(); vibrate([30,30,60]);
+      playCrash(); shakeScreen(); vibrate([35,25,35,25,60]);
       visual.classList.add("boom");
       checkMilestones();
       setTimeout(() => { visual.classList.remove("boom"); nextCar(); renderCar(); }, 260);
@@ -973,6 +1177,11 @@
   // this just adds a permanent reputation multiplier on top.
   document.getElementById("prestigeBtn").addEventListener("click", () => {
     const gain = prestigeGain(); if(gain <= 0) return;
+    state.centerLog.push({
+      num: state.centerLog.length + 1,
+      openedAt: Date.now(),
+      statsAtOpen: {totalEarned: state.totalEarned, carsDestroyed: state.carsDestroyed, reputation: state.reputation}
+    });
     state.reputation += gain;
     playMilestone();
     spawnBits(14, ["🏭","✨","🎉","🔩"]);
@@ -1117,7 +1326,7 @@
         if(loaded.state){
           state = Object.assign(state, loaded.state);
           MACHINES.forEach(m => { if(!(m.id in state.owned)) state.owned[m.id] = 0; });
-          ZONE_IDS.forEach(z => { if(!(z in state.zoneDamage)) state.zoneDamage[z] = 0; });
+          CAR_TIERS[Math.min(state.milestoneIndex||0, CAR_TIERS.length-1)].zones.forEach(z => { if(!(z in state.zoneDamage)) state.zoneDamage[z] = 0; });
           if(state.milestoneIndex == null) state.milestoneIndex = 0;
           if(!state.dailyQuests) state.dailyQuests = [];
           if(!state.firstLaunch) state.firstLaunch = Date.now();
@@ -1214,6 +1423,8 @@
     setupBackButton();
     await load();
     if(!state.carMaxHp) nextCar();
+    renderCarBody(CAR_TIERS[currentTierIndex()]);
+    if(!state.centerLog || !state.centerLog.length){ state.centerLog = [{num:1, openedAt: state.firstLaunch}]; }
     renderAvatarGrid();
     if(profile.name){
       applyProfileUi();
