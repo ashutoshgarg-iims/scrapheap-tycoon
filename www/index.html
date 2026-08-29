@@ -5,349 +5,188 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>SCRAPHEAP TYCOON</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#14171a;
-    --bg-panel:#1d2125;
-    --bg-card:#242830;
-    --bg-card-hover:#2b303a;
+    --bg:#0f1113;
+    --bg-panel:#1a1d21;
+    --bg-card:#22262c;
+    --bg-card-hover:#2a2f36;
     --rust:#c1502e;
-    --rust-light:#e0713f;
-    --yellow:#e8b23b;
+    --rust-light:#ff7a45;
+    --yellow:#f4c14e;
     --concrete:#9a9d97;
-    --offwhite:#edeae3;
+    --offwhite:#f3f0e8;
     --line:#33383f;
     --good:#7fb069;
+    --danger:#e0503a;
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
+  html,body{margin:0;padding:0;height:100%;}
   body{
     background:
-      radial-gradient(circle at 15% 0%, rgba(193,80,46,0.08), transparent 40%),
-      radial-gradient(circle at 85% 100%, rgba(232,178,59,0.06), transparent 40%),
+      radial-gradient(circle at 15% 0%, rgba(193,80,46,0.10), transparent 42%),
+      radial-gradient(circle at 85% 100%, rgba(244,193,78,0.08), transparent 42%),
+      repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0 2px, transparent 2px 26px),
       var(--bg);
     color:var(--offwhite);
     font-family:'Inter',sans-serif;
     min-height:100vh;
     -webkit-tap-highlight-color:transparent;
     user-select:none;
+    overflow-x:hidden;
   }
+  body.shake{animation:bodyshake 0.25s;}
+  @keyframes bodyshake{
+    0%,100%{transform:translate(0,0);}
+    20%{transform:translate(-3px,2px);}
+    40%{transform:translate(3px,-2px);}
+    60%{transform:translate(-2px,-2px);}
+    80%{transform:translate(2px,2px);}
+  }
+
   .hud{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    padding:14px 18px;
-    background:var(--bg-panel);
-    border-bottom:3px solid var(--rust);
-    position:sticky;
-    top:0;
-    z-index:10;
-    flex-wrap:wrap;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:12px 18px; background:var(--bg-panel); border-bottom:3px solid var(--rust);
+    position:sticky; top:0; z-index:20; flex-wrap:wrap;
   }
-  .brand{
-    font-family:'Oswald',sans-serif;
-    font-weight:700;
-    letter-spacing:1px;
-    font-size:20px;
-    text-transform:uppercase;
-    color:var(--offwhite);
-    display:flex;
-    align-items:center;
-    gap:8px;
+  .brand-row{display:flex; align-items:center; gap:12px;}
+  .avatar{
+    width:34px; height:34px; border-radius:50%;
+    background:linear-gradient(135deg,var(--rust-light),var(--rust));
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Oswald',sans-serif; font-weight:700; font-size:14px;
+    border:2px solid var(--yellow); flex-shrink:0;
   }
-  .brand .tag{
-    font-family:'JetBrains Mono',monospace;
-    font-size:10px;
-    background:var(--rust);
-    color:var(--offwhite);
-    padding:2px 6px;
-    border-radius:3px;
-    letter-spacing:0;
-    font-weight:700;
-  }
-  .stats{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-  }
-  .stat{
-    background:var(--bg-card);
-    border:1px solid var(--line);
-    border-radius:6px;
-    padding:6px 12px;
-    text-align:right;
-    min-width:88px;
-  }
-  .stat .label{
-    font-size:9px;
-    letter-spacing:1.5px;
-    color:var(--concrete);
-    font-family:'Oswald',sans-serif;
-    text-transform:uppercase;
-  }
-  .stat .value{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    font-size:15px;
-    color:var(--yellow);
-  }
+  .who{display:flex; flex-direction:column; line-height:1.15;}
+  .who .name{font-family:'Oswald',sans-serif; font-size:13px; text-transform:uppercase; letter-spacing:0.5px;}
+  .who .rank{font-size:10px; color:var(--yellow); font-family:'JetBrains Mono',monospace;}
+  .stats{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  .stat{background:var(--bg-card); border:1px solid var(--line); border-radius:6px; padding:5px 10px; text-align:right; min-width:76px;}
+  .stat .label{font-size:9px; letter-spacing:1.5px; color:var(--concrete); font-family:'Oswald',sans-serif; text-transform:uppercase;}
+  .stat .value{font-family:'JetBrains Mono',monospace; font-weight:700; font-size:14px; color:var(--yellow);}
   .stat.rep .value{color:var(--rust-light);}
+  .icon-btn{background:var(--bg-card); border:1px solid var(--line); border-radius:6px; width:36px; height:36px; font-size:16px; cursor:pointer; color:var(--offwhite); display:flex; align-items:center; justify-content:center;}
+  .streak{display:flex; align-items:center; gap:4px; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--yellow); background:var(--bg-card); border:1px solid var(--line); border-radius:6px; padding:5px 8px;}
 
-  .layout{
-    display:flex;
-    gap:16px;
-    padding:18px;
-    max-width:1100px;
-    margin:0 auto;
-    align-items:flex-start;
-    flex-wrap:wrap;
-  }
-  .yard{
-    flex:1 1 340px;
-    background:var(--bg-panel);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:22px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:16px;
-    min-height:380px;
-    justify-content:center;
-    position:relative;
-    overflow:hidden;
-  }
-  .yard::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    background-image:linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-    background-size:24px 24px;
-    pointer-events:none;
-  }
-  .press-wrap{
-    position:relative;
-    z-index:1;
-  }
-  #crushBtn{
-    background:linear-gradient(180deg, var(--rust-light), var(--rust));
-    border:none;
-    border-radius:16px;
-    width:180px;
-    height:180px;
-    font-size:64px;
-    cursor:pointer;
-    box-shadow:0 8px 0 #8f3a20, 0 10px 18px rgba(0,0,0,0.4);
-    transition:transform 0.06s ease;
-    position:relative;
-  }
-  #crushBtn:active{
-    transform:translateY(6px);
-    box-shadow:0 2px 0 #8f3a20, 0 4px 10px rgba(0,0,0,0.4);
-  }
-  #crushBtn.squish{animation:squish 0.18s ease;}
-  @keyframes squish{
-    0%{transform:scaleY(1);}
-    40%{transform:scaleY(0.82);}
-    100%{transform:scaleY(1);}
-  }
-  .press-label{
-    font-family:'Oswald',sans-serif;
-    text-transform:uppercase;
-    letter-spacing:2px;
-    font-size:13px;
-    color:var(--concrete);
-    text-align:center;
-  }
-  .float-layer{
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-    z-index:5;
-  }
-  .float-txt{
-    position:absolute;
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    color:var(--yellow);
-    font-size:15px;
-    animation:rise 0.9s ease-out forwards;
-    left:50%;
-    top:40%;
-  }
-  @keyframes rise{
-    0%{opacity:1; transform:translate(-50%,0);}
-    100%{opacity:0; transform:translate(-50%,-70px);}
-  }
+  .milestone-bar{max-width:1100px; margin:14px auto 0 auto; padding:0 18px;}
+  .mb-head{display:flex; justify-content:space-between; font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:1px; font-size:12px; color:var(--concrete); margin-bottom:6px;}
+  .mb-track{height:12px; border-radius:20px; background:var(--bg-card); border:1px solid var(--line); overflow:hidden;}
+  .mb-fill{height:100%; background:linear-gradient(90deg,var(--rust),var(--yellow)); width:0%; transition:width 0.3s ease;}
 
-  .machines{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    justify-content:center;
-    z-index:1;
-    min-height:28px;
-  }
-  .machine-badge{
-    background:var(--bg-card);
-    border:1px solid var(--line);
-    border-radius:20px;
-    padding:4px 10px;
-    font-size:12px;
-    font-family:'JetBrains Mono',monospace;
-    display:flex;
-    gap:6px;
-    align-items:center;
-  }
+  .prestige-bar{max-width:1100px; margin:14px auto 0 auto; padding:0 18px;}
+  .prestige-card{background:linear-gradient(90deg, rgba(244,193,78,0.10), rgba(193,80,46,0.10)); border:1px solid var(--yellow); border-radius:10px; padding:12px 18px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;}
+  .prestige-card .ptxt{font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:1px; font-size:13px;}
+  .prestige-card .ptxt small{display:block; font-family:'Inter',sans-serif; text-transform:none; letter-spacing:0; color:var(--concrete); font-size:11px; margin-top:2px;}
+  #prestigeBtn{background:var(--yellow); color:#241a05; border:none; border-radius:8px; padding:10px 18px; font-family:'Oswald',sans-serif; font-weight:600; text-transform:uppercase; letter-spacing:1px; cursor:pointer; font-size:13px;}
+  #prestigeBtn:disabled{background:#4a4a44; color:#8a8a82; cursor:not-allowed;}
 
-  .shop{
-    flex:1 1 380px;
-    background:var(--bg-panel);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:16px;
+  .layout{display:flex; gap:16px; padding:18px; max-width:1100px; margin:0 auto; align-items:flex-start; flex-wrap:wrap;}
+  .yard{flex:1 1 340px; background:var(--bg-panel); border:1px solid var(--line); border-radius:12px; padding:22px; display:flex; flex-direction:column; align-items:center; gap:12px; min-height:420px; justify-content:center; position:relative; overflow:hidden;}
+  .car-name-tag{font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:1.5px; font-size:13px; color:var(--concrete);}
+  .car-name-tag b{color:var(--offwhite);}
+
+  .car-stage{position:relative; z-index:1;}
+  .car-visual{
+    width:200px; height:200px; border-radius:20px; background:linear-gradient(180deg,#3a3f46,#22262c);
+    display:flex; align-items:center; justify-content:center; font-size:96px; position:relative;
+    box-shadow:0 8px 0 #14161a, 0 10px 20px rgba(0,0,0,0.45); border:3px solid var(--line); transition:filter 0.15s ease;
   }
-  .shop h2, .upgrades h2{
-    font-family:'Oswald',sans-serif;
-    text-transform:uppercase;
-    letter-spacing:1.5px;
-    font-size:14px;
-    color:var(--concrete);
-    margin:0 0 12px 0;
-    border-bottom:1px solid var(--line);
-    padding-bottom:8px;
-  }
-  .machine-card{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    background:var(--bg-card);
-    border:1px solid var(--line);
-    border-radius:8px;
-    padding:10px 12px;
-    margin-bottom:8px;
-    cursor:pointer;
-    transition:background 0.12s ease, transform 0.06s ease;
-  }
+  .car-visual.stage-2{filter:saturate(0.8) contrast(1.05);}
+  .car-visual.stage-3{filter:saturate(0.55) sepia(0.25) contrast(1.1);}
+  .car-visual.hitpulse{animation:hitpulse 0.12s ease;}
+  @keyframes hitpulse{0%{transform:scale(1) rotate(0deg);} 45%{transform:scale(0.9) rotate(-3deg);} 100%{transform:scale(1) rotate(0deg);}}
+  .car-visual.boom{animation:boomanim 0.4s ease;}
+  @keyframes boomanim{0%{transform:scale(1); opacity:1;} 40%{transform:scale(1.25); opacity:1; filter:brightness(2) saturate(0);} 100%{transform:scale(0.2); opacity:0;}}
+  .crack-overlay{position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity 0.2s ease;}
+  .crack-overlay svg{width:100%; height:100%;}
+  #crushBtn{all:unset; cursor:pointer; width:100%; height:100%; display:flex; align-items:center; justify-content:center;}
+
+  .hp-bar{width:210px; height:14px; border-radius:20px; background:var(--bg-card); border:1px solid var(--line); overflow:hidden;}
+  .hp-fill{height:100%; background:linear-gradient(90deg,var(--good),var(--yellow)); width:100%; transition:width 0.15s ease;}
+  .hp-fill.low{background:linear-gradient(90deg,var(--danger),var(--rust-light));}
+
+  .tap-hint{font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:2px; font-size:12px; color:var(--concrete);}
+  .combo-badge{position:absolute; top:10px; right:10px; background:var(--yellow); color:#241a05; font-family:'Oswald',sans-serif; font-weight:700; font-size:13px; padding:4px 10px; border-radius:20px; z-index:6; box-shadow:0 3px 0 #8f6a1a;}
+
+  .float-layer, .particle-layer{position:absolute; inset:0; pointer-events:none; z-index:5;}
+  .float-txt{position:absolute; font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--yellow); font-size:16px; animation:rise 0.9s ease-out forwards; left:50%; top:38%;}
+  @keyframes rise{0%{opacity:1; transform:translate(-50%,0) scale(1);} 100%{opacity:0; transform:translate(-50%,-75px) scale(1.15);}}
+  .bit{position:absolute; left:50%; top:50%; font-size:18px; animation:fly 0.6s ease-out forwards;}
+  @keyframes fly{0%{opacity:1; transform:translate(-50%,-50%) rotate(0deg);} 100%{opacity:0; transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot));}}
+
+  .shop, .upgrades{background:var(--bg-panel); border:1px solid var(--line); border-radius:12px; padding:16px;}
+  .shop h2, .upgrades h2{font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:1.5px; font-size:14px; color:var(--concrete); margin:0 0 12px 0; border-bottom:1px solid var(--line); padding-bottom:8px;}
+  .machine-card{display:flex; align-items:center; gap:12px; background:var(--bg-card); border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin-bottom:8px; cursor:pointer; transition:background 0.12s ease, transform 0.06s ease;}
   .machine-card:hover{background:var(--bg-card-hover);}
   .machine-card:active{transform:scale(0.98);}
   .machine-card.disabled{opacity:0.45; cursor:not-allowed;}
   .machine-card.disabled:hover{background:var(--bg-card);}
-  .m-icon{
-    font-size:28px;
-    width:42px;
-    text-align:center;
-  }
+  .m-icon{font-size:26px; width:38px; text-align:center;}
   .m-info{flex:1;}
-  .m-name{
-    font-family:'Oswald',sans-serif;
-    font-size:14px;
-    text-transform:uppercase;
-    letter-spacing:0.5px;
-  }
-  .m-sub{
-    font-size:11px;
-    color:var(--concrete);
-    font-family:'JetBrains Mono',monospace;
-  }
-  .m-buy{
-    text-align:right;
-  }
-  .m-cost{
-    font-family:'JetBrains Mono',monospace;
-    font-weight:700;
-    color:var(--yellow);
-    font-size:14px;
-  }
-  .m-owned{
-    font-size:10px;
-    color:var(--concrete);
-    font-family:'JetBrains Mono',monospace;
-  }
+  .m-name{font-family:'Oswald',sans-serif; font-size:14px; text-transform:uppercase; letter-spacing:0.5px;}
+  .m-sub{font-size:11px; color:var(--concrete); font-family:'JetBrains Mono',monospace;}
+  .m-buy{text-align:right;}
+  .m-cost{font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--yellow); font-size:14px;}
+  .m-owned{font-size:10px; color:var(--concrete); font-family:'JetBrains Mono',monospace;}
 
-  .upgrades{
-    background:var(--bg-panel);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:16px;
-    margin-top:16px;
-  }
+  .toast-layer{position:fixed; top:70px; left:50%; transform:translateX(-50%); z-index:100; display:flex; flex-direction:column; gap:8px; align-items:center; pointer-events:none;}
+  .toast{background:linear-gradient(90deg,var(--rust),var(--rust-light)); border:2px solid var(--yellow); border-radius:10px; padding:12px 20px; text-align:center; min-width:260px; box-shadow:0 6px 18px rgba(0,0,0,0.5); animation:toastin 0.35s ease, toastout 0.4s ease 2.6s forwards;}
+  .toast .t-title{font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:1px; font-weight:700; font-size:14px;}
+  .toast .t-sub{font-family:'JetBrains Mono',monospace; font-size:12px; color:#fff2df; margin-top:2px;}
+  @keyframes toastin{0%{opacity:0; transform:translateY(-16px) scale(0.9);} 100%{opacity:1; transform:translateY(0) scale(1);}}
+  @keyframes toastout{0%{opacity:1;} 100%{opacity:0; transform:translateY(-10px);}}
 
-  .prestige-bar{
-    max-width:1100px;
-    margin:0 auto 20px auto;
-    padding:0 18px;
-  }
-  .prestige-card{
-    background:linear-gradient(90deg, rgba(232,178,59,0.10), rgba(193,80,46,0.10));
-    border:1px solid var(--yellow);
-    border-radius:10px;
-    padding:14px 18px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    flex-wrap:wrap;
-    gap:10px;
-  }
-  .prestige-card .ptxt{
-    font-family:'Oswald',sans-serif;
-    text-transform:uppercase;
-    letter-spacing:1px;
-    font-size:13px;
-    color:var(--offwhite);
-  }
-  .prestige-card .ptxt small{
-    display:block;
-    font-family:'Inter',sans-serif;
-    text-transform:none;
-    letter-spacing:0;
-    color:var(--concrete);
-    font-size:11px;
-    margin-top:2px;
-  }
-  #prestigeBtn{
-    background:var(--yellow);
-    color:#241a05;
-    border:none;
-    border-radius:8px;
-    padding:10px 18px;
-    font-family:'Oswald',sans-serif;
-    font-weight:600;
-    text-transform:uppercase;
-    letter-spacing:1px;
-    cursor:pointer;
-    font-size:13px;
-  }
-  #prestigeBtn:disabled{
-    background:#4a4a44;
-    color:#8a8a82;
-    cursor:not-allowed;
-  }
-  footer{
-    text-align:center;
-    color:var(--line);
-    font-size:11px;
-    padding:20px;
-    font-family:'JetBrains Mono',monospace;
-  }
+  .modal-overlay{position:fixed; inset:0; background:rgba(10,11,12,0.88); z-index:200; display:flex; align-items:center; justify-content:center; padding:20px;}
+  .modal-card{background:var(--bg-panel); border:1px solid var(--rust); border-radius:14px; padding:28px; max-width:360px; width:100%; text-align:center;}
+  .modal-card .mtitle{font-family:'Oswald',sans-serif; text-transform:uppercase; font-size:22px; letter-spacing:1px; margin-bottom:4px;}
+  .modal-card .msub{color:var(--concrete); font-size:13px; margin-bottom:18px;}
+  .modal-card input{width:100%; padding:12px 14px; border-radius:8px; border:1px solid var(--line); background:var(--bg-card); color:var(--offwhite); font-family:'Inter',sans-serif; font-size:15px; margin-bottom:14px; outline:none;}
+  .modal-card input:focus{border-color:var(--yellow);}
+  .modal-card button{width:100%; padding:12px; border:none; border-radius:8px; background:var(--rust); color:var(--offwhite); font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:1px; font-weight:600; font-size:14px; cursor:pointer;}
+  .modal-card button:hover{background:var(--rust-light);}
+
+  footer{text-align:center; color:var(--line); font-size:11px; padding:20px; font-family:'JetBrains Mono',monospace;}
   @media (max-width:640px){
     .hud{flex-direction:column; align-items:flex-start;}
-    #crushBtn{width:150px;height:150px;font-size:52px;}
+    .car-visual{width:160px; height:160px; font-size:76px;}
+    .hp-bar{width:170px;}
   }
 </style>
 </head>
 <body>
 
+<div class="toast-layer" id="toastLayer"></div>
+
+<div class="modal-overlay" id="profileModal" style="display:none;">
+  <div class="modal-card">
+    <div class="mtitle">🔩 Scrapheap Tycoon</div>
+    <div class="msub">Enter your operator name to start your yard</div>
+    <input id="nameInput" maxlength="16" placeholder="e.g. RustyRex" autocomplete="off">
+    <button id="startBtn">Start Crushing</button>
+  </div>
+</div>
+
 <div class="hud">
-  <div class="brand">🔩 SCRAPHEAP <span style="color:var(--rust-light)">TYCOON</span> <span class="tag">v1</span></div>
+  <div class="brand-row">
+    <div class="avatar" id="avatarInitial">?</div>
+    <div class="who">
+      <span class="name" id="playerName">—</span>
+      <span class="rank" id="playerRank">Scrap Rookie</span>
+    </div>
+  </div>
   <div class="stats">
     <div class="stat"><div class="label">Scrap</div><div class="value" id="statScrap">$0</div></div>
     <div class="stat"><div class="label">Per Sec</div><div class="value" id="statRate">$0</div></div>
     <div class="stat rep"><div class="label">Reputation</div><div class="value" id="statRep">×1.0</div></div>
+    <div class="streak" id="streakBox" title="Daily login streak">🔥 <span id="streakVal">0</span></div>
+    <button class="icon-btn" id="muteBtn" title="Toggle sound">🔊</button>
   </div>
+</div>
+
+<div class="milestone-bar">
+  <div class="mb-head"><span id="mbLabel">Next milestone</span><span id="mbCount">0 / 1</span></div>
+  <div class="mb-track"><div class="mb-fill" id="mbFill"></div></div>
 </div>
 
 <div class="prestige-bar">
@@ -361,12 +200,25 @@
 
 <div class="layout">
   <div class="yard">
-    <div class="press-wrap">
-      <button id="crushBtn">🚗</button>
-      <div class="float-layer" id="floatLayer"></div>
+    <div class="car-name-tag">Now crushing: <b id="carName">Rusty Sedan</b></div>
+    <div class="car-stage">
+      <div class="car-visual stage-1" id="carVisual">
+        <button id="crushBtn">🚗</button>
+        <div class="crack-overlay" id="crackOverlay">
+          <svg viewBox="0 0 200 200"><g stroke="#0c0c0c" stroke-width="3" fill="none" stroke-linecap="round">
+            <path d="M100 40 L85 90 L110 100 L90 150"/>
+            <path d="M60 60 L100 100"/>
+            <path d="M150 70 L110 100 L140 140"/>
+            <path d="M70 140 L100 100 L130 160"/>
+          </g></svg>
+        </div>
+      </div>
+      <div class="combo-badge" id="comboBadge" style="display:none;">COMBO ×1</div>
     </div>
-    <div class="press-label">Tap the car to crush it for scrap</div>
-    <div class="machines" id="machineBadges"></div>
+    <div class="hp-bar"><div class="hp-fill" id="hpFill"></div></div>
+    <div class="tap-hint">Tap the car to smash it for scrap</div>
+    <div class="float-layer" id="floatLayer"></div>
+    <div class="particle-layer" id="particleLayer"></div>
   </div>
 
   <div style="flex:1 1 380px; display:flex; flex-direction:column; gap:16px;">
@@ -381,7 +233,7 @@
   </div>
 </div>
 
-<footer>Prototype build — progress saves automatically to this device.</footer>
+<footer>Scrapheap Tycoon — progress saves automatically to this device.</footer>
 
 <script>
 (function(){
@@ -393,29 +245,47 @@
     {id:'smelter',   name:'Smelter Furnace',emoji:'🔥', baseCost:190000,costMult:1.18, baseOutput:1100},
     {id:'sorter',    name:'AI Sort Line',  emoji:'🤖', baseCost:2400000,costMult:1.19, baseOutput:7200},
   ];
+  const CLICK_UPGRADE = {baseCost:50, costMult:1.55, baseGain:1};
 
+  const CAR_TIERS = [
+    {name:'Rusty Sedan',   emoji:'🚗', hp:10,   reward:9},
+    {name:'Pickup Truck',  emoji:'🛻', hp:45,   reward:40},
+    {name:'SUV Beast',     emoji:'🚙', hp:180,  reward:160},
+    {name:'Cargo Van',     emoji:'🚐', hp:650,  reward:580},
+    {name:'City Bus',      emoji:'🚌', hp:2200, reward:2000},
+    {name:'Mega Truck',    emoji:'🚛', hp:7500, reward:7000},
+  ];
+
+  const MILESTONES = [
+    {count:1,   title:'First Blood',            rank:'Scrap Rookie',      bonus:20},
+    {count:5,   title:'Getting the Hang of It',  rank:'Yard Hand',         bonus:150},
+    {count:15,  title:'Crusher Apprentice',      rank:'Crusher Apprentice',bonus:800},
+    {count:30,  title:'Metal Menace',            rank:'Metal Menace',      bonus:3000},
+    {count:60,  title:'Junkyard Boss',           rank:'Junkyard Boss',     bonus:12000},
+    {count:100, title:'Scrap Baron',             rank:'Scrap Baron',       bonus:50000},
+    {count:200, title:'Legend of the Yard',      rank:'Legend of the Yard',bonus:250000},
+  ];
+
+  let profile = {name:null, streak:0, lastLogin:null};
   let state = {
-    scrap: 0,
-    totalEarned: 0,
-    clickLevel: 0,
-    owned: {},
-    reputation: 0,
+    scrap:0, totalEarned:0, clickLevel:0, owned:{}, reputation:0,
+    carsDestroyed:0, carTier:0, carHp:CAR_TIERS[0].hp, carMaxHp:CAR_TIERS[0].hp,
+    muted:false,
   };
   MACHINES.forEach(m => state.owned[m.id] = 0);
 
-  const CLICK_UPGRADE = {baseCost:50, costMult:1.55, baseGain:1};
+  let comboCount = 0, lastTapTime = 0, comboResetTimer = null;
 
   function fmt(n){
     if(n < 1000) return '$' + Math.floor(n).toLocaleString();
     const units = ['K','M','B','T','Qa','Qi'];
-    let u = -1;
-    let v = n;
+    let u = -1, v = n;
     while(v >= 1000 && u < units.length-1){ v/=1000; u++; }
     return '$' + v.toFixed(v < 10 ? 2 : 1) + units[u];
   }
-
   function multiplier(){ return 1 + state.reputation * 0.15; }
   function clickPower(){ return (1 + state.clickLevel * CLICK_UPGRADE.baseGain) * multiplier(); }
+  function comboMult(){ return 1 + Math.min(comboCount, 20) * 0.05; }
   function machineCost(m){ return Math.ceil(m.baseCost * Math.pow(m.costMult, state.owned[m.id])); }
   function clickUpgradeCost(){ return Math.ceil(CLICK_UPGRADE.baseCost * Math.pow(CLICK_UPGRADE.costMult, state.clickLevel)); }
   function ratePerSec(){
@@ -428,10 +298,69 @@
     if(state.totalEarned < prestigeThreshold()) return 0;
     return Math.max(1, Math.floor(Math.sqrt(state.totalEarned / 5000)) - state.reputation);
   }
+  function currentRank(){
+    let rank = 'Scrap Rookie';
+    for(const m of MILESTONES){ if(state.carsDestroyed >= m.count) rank = m.rank; }
+    return rank;
+  }
+  function nextMilestone(){
+    for(const m of MILESTONES){ if(state.carsDestroyed < m.count) return m; }
+    return null;
+  }
+
+  let audioCtx = null;
+  function ensureAudio(){
+    if(!audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; } }
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+  function noiseBurst(duration, freqStart, freqEnd, gainAmt){
+    if(state.muted) return;
+    const ctx = ensureAudio(); if(!ctx) return;
+    const bufferSize = Math.floor(ctx.sampleRate * duration);
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for(let i=0;i<bufferSize;i++){ data[i] = (Math.random()*2-1) * (1 - i/bufferSize); }
+    const src = ctx.createBufferSource(); src.buffer = buffer;
+    const filter = ctx.createBiquadFilter(); filter.type='bandpass';
+    filter.frequency.setValueAtTime(freqStart, ctx.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(Math.max(freqEnd,40), ctx.currentTime+duration);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(gainAmt, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+duration);
+    src.connect(filter).connect(g).connect(ctx.destination);
+    src.start(); src.stop(ctx.currentTime+duration);
+  }
+  function playThud(){ noiseBurst(0.08, 900, 200, 0.22); }
+  function playCrash(){ noiseBurst(0.35, 1600, 80, 0.5); setTimeout(() => noiseBurst(0.25, 400, 60, 0.4), 40); }
+  function playCoin(){
+    if(state.muted) return;
+    const ctx = ensureAudio(); if(!ctx) return;
+    const o = ctx.createOscillator(); const g = ctx.createGain();
+    o.type='square'; o.frequency.setValueAtTime(880, ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime+0.1);
+    g.gain.setValueAtTime(0.14, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.15);
+    o.connect(g).connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime+0.15);
+  }
+  function playMilestone(){
+    if(state.muted) return;
+    const ctx = ensureAudio(); if(!ctx) return;
+    [523,659,784,1046].forEach((f,i) => {
+      const o = ctx.createOscillator(); const g = ctx.createGain();
+      o.type='triangle'; o.frequency.value = f;
+      const t0 = ctx.currentTime + i*0.08;
+      g.gain.setValueAtTime(0.001, t0);
+      g.gain.exponentialRampToValueAtTime(0.18, t0+0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, t0+0.25);
+      o.connect(g).connect(ctx.destination);
+      o.start(t0); o.stop(t0+0.3);
+    });
+  }
 
   function renderMachineList(){
-    const el = document.getElementById('machineList');
-    el.innerHTML = '';
+    const el = document.getElementById('machineList'); el.innerHTML = '';
     MACHINES.forEach(m => {
       const cost = machineCost(m);
       const affordable = state.scrap >= cost;
@@ -451,7 +380,6 @@
       el.appendChild(card);
     });
   }
-
   function renderUpgradeList(){
     const el = document.getElementById('upgradeList');
     const cost = clickUpgradeCost();
@@ -461,7 +389,7 @@
         <div class="m-icon">💪</div>
         <div class="m-info">
           <div class="m-name">Stronger Swing</div>
-          <div class="m-sub">Level ${state.clickLevel} · current tap value ${fmt(clickPower())}</div>
+          <div class="m-sub">Level ${state.clickLevel} · current tap damage ${clickPower().toFixed(1)}</div>
         </div>
         <div class="m-buy">
           <div class="m-cost">${fmt(cost)}</div>
@@ -470,29 +398,14 @@
       </div>`;
     document.getElementById('clickUpgradeCard').onclick = buyClickUpgrade;
   }
-
-  function renderBadges(){
-    const el = document.getElementById('machineBadges');
-    el.innerHTML = '';
-    MACHINES.forEach(m => {
-      if(state.owned[m.id] > 0){
-        const b = document.createElement('div');
-        b.className = 'machine-badge';
-        b.innerHTML = `${m.emoji} ×${state.owned[m.id]}`;
-        el.appendChild(b);
-      }
-    });
-  }
-
   function renderStats(){
     document.getElementById('statScrap').textContent = fmt(state.scrap);
     document.getElementById('statRate').textContent = fmt(ratePerSec()) + '/s';
     document.getElementById('statRep').textContent = '×' + multiplier().toFixed(2);
+    document.getElementById('playerRank').textContent = currentRank();
 
-    const need = prestigeThreshold();
-    const gain = prestigeGain();
-    const btn = document.getElementById('prestigeBtn');
-    const info = document.getElementById('prestigeInfo');
+    const need = prestigeThreshold(); const gain = prestigeGain();
+    const btn = document.getElementById('prestigeBtn'); const info = document.getElementById('prestigeInfo');
     if(gain > 0){
       btn.disabled = false;
       info.textContent = `Reopen now for +${gain} reputation star${gain>1?'s':''} (×${(0.15*gain).toFixed(2)} boost). This resets scrap and machines.`;
@@ -500,103 +413,242 @@
       btn.disabled = true;
       info.textContent = `Earn a lifetime total of ${fmt(need)} to unlock your next reputation star. Progress: ${fmt(state.totalEarned)} / ${fmt(need)}.`;
     }
-  }
 
+    const next = nextMilestone();
+    if(next){
+      const prevCount = MILESTONES.filter(m=>m.count<=state.carsDestroyed).slice(-1)[0]?.count || 0;
+      document.getElementById('mbLabel').textContent = `Next: ${next.title} (+${fmt(next.bonus)})`;
+      document.getElementById('mbCount').textContent = `${state.carsDestroyed} / ${next.count}`;
+      const pct = Math.min(100, ((state.carsDestroyed-prevCount)/(next.count-prevCount))*100);
+      document.getElementById('mbFill').style.width = pct + '%';
+    } else {
+      document.getElementById('mbLabel').textContent = 'All milestones complete — legend status!';
+      document.getElementById('mbCount').textContent = `${state.carsDestroyed} cars crushed`;
+      document.getElementById('mbFill').style.width = '100%';
+    }
+  }
+  function renderCar(){
+    const tier = CAR_TIERS[state.carTier];
+    document.getElementById('carName').textContent = tier.name;
+    document.getElementById('crushBtn').textContent = tier.emoji;
+    const pct = Math.max(0, state.carHp / state.carMaxHp);
+    const fill = document.getElementById('hpFill');
+    fill.style.width = (pct*100) + '%';
+    fill.classList.toggle('low', pct < 0.34);
+    const visual = document.getElementById('carVisual');
+    visual.classList.remove('stage-1','stage-2','stage-3');
+    if(pct > 0.66) visual.classList.add('stage-1');
+    else if(pct > 0.33) visual.classList.add('stage-2');
+    else visual.classList.add('stage-3');
+    document.getElementById('crackOverlay').style.opacity = Math.min(1, (1-pct)*1.1);
+  }
   function renderAll(){
-    renderMachineList();
-    renderUpgradeList();
-    renderBadges();
-    renderStats();
+    renderMachineList(); renderUpgradeList(); renderStats(); renderCar();
+    document.getElementById('muteBtn').textContent = state.muted ? '🔇' : '🔊';
   }
 
-  function earn(amount){
-    state.scrap += amount;
-    state.totalEarned += amount;
+  function spawnFloat(text, color){
+    const layer = document.getElementById('floatLayer');
+    const t = document.createElement('div');
+    t.className = 'float-txt'; t.textContent = text;
+    if(color) t.style.color = color;
+    t.style.left = (40 + Math.random()*20) + '%';
+    layer.appendChild(t);
+    setTimeout(() => t.remove(), 950);
   }
+  function spawnBits(n, emojis){
+    const layer = document.getElementById('particleLayer');
+    for(let i=0;i<n;i++){
+      const b = document.createElement('div');
+      b.className = 'bit';
+      b.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      const angle = Math.random()*Math.PI*2;
+      const dist = 60 + Math.random()*90;
+      b.style.setProperty('--dx', Math.cos(angle)*dist + 'px');
+      b.style.setProperty('--dy', Math.sin(angle)*dist + 'px');
+      b.style.setProperty('--rot', (Math.random()*360-180) + 'deg');
+      layer.appendChild(b);
+      setTimeout(() => b.remove(), 650);
+    }
+  }
+  function showToast(title, sub){
+    const layer = document.getElementById('toastLayer');
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.innerHTML = `<div class="t-title">${title}</div><div class="t-sub">${sub}</div>`;
+    layer.appendChild(t);
+    setTimeout(() => t.remove(), 3100);
+  }
+  function shakeScreen(){
+    document.body.classList.remove('shake'); void document.body.offsetWidth;
+    document.body.classList.add('shake');
+  }
+
+  function earn(amount){ state.scrap += amount; state.totalEarned += amount; }
 
   function buyMachine(m){
     const cost = machineCost(m);
     if(state.scrap < cost) return;
-    state.scrap -= cost;
-    state.owned[m.id] += 1;
-    renderAll();
-    save();
+    state.scrap -= cost; state.owned[m.id] += 1;
+    playCoin(); renderAll(); save();
   }
-
   function buyClickUpgrade(){
     const cost = clickUpgradeCost();
     if(state.scrap < cost) return;
-    state.scrap -= cost;
-    state.clickLevel += 1;
-    renderAll();
-    save();
+    state.scrap -= cost; state.clickLevel += 1;
+    playCoin(); renderAll(); save();
   }
 
-  function spawnFloat(text){
-    const layer = document.getElementById('floatLayer');
-    const t = document.createElement('div');
-    t.className = 'float-txt';
-    t.textContent = text;
-    t.style.left = (45 + Math.random()*10) + '%';
-    layer.appendChild(t);
-    setTimeout(() => t.remove(), 950);
+  function checkMilestones(prevCount){
+    MILESTONES.forEach(m => {
+      if(prevCount < m.count && state.carsDestroyed >= m.count){
+        earn(m.bonus);
+        const tierIdx = Math.min(MILESTONES.indexOf(m)+1, CAR_TIERS.length-1);
+        state.carTier = Math.max(state.carTier, tierIdx);
+        playMilestone();
+        showToast('🏆 Milestone: ' + m.title, `Rank up: ${m.rank} · +${fmt(m.bonus)} bonus scrap`);
+      }
+    });
+  }
+
+  function nextCar(){
+    const tier = CAR_TIERS[state.carTier];
+    const variance = 0.85 + Math.random()*0.3;
+    state.carMaxHp = Math.max(1, Math.round(tier.hp * variance));
+    state.carHp = state.carMaxHp;
+  }
+
+  function hitCar(){
+    const dmg = clickPower() * comboMult();
+    state.carHp -= dmg;
+    playThud();
+    spawnFloat('-' + dmg.toFixed(1), '#ffd27a');
+    spawnBits(3, ['🔩','⚙️','✨']);
+    const visual = document.getElementById('carVisual');
+    visual.classList.remove('hitpulse'); void visual.offsetWidth; visual.classList.add('hitpulse');
+
+    if(state.carHp <= 0){
+      const tier = CAR_TIERS[state.carTier];
+      const reward = tier.reward * multiplier() * comboMult();
+      earn(reward);
+      state.carsDestroyed += 1;
+      spawnFloat('+' + fmt(reward), '#7fffb0');
+      spawnBits(10, ['💥','🔩','⚙️','✨','🧲']);
+      playCrash(); shakeScreen();
+      visual.classList.add('boom');
+      const prevCount = state.carsDestroyed - 1;
+      checkMilestones(prevCount);
+      setTimeout(() => { visual.classList.remove('boom'); nextCar(); renderCar(); }, 260);
+      save();
+    }
+    renderCar();
+    renderStats();
   }
 
   document.getElementById('crushBtn').addEventListener('click', () => {
-    const gain = clickPower();
-    earn(gain);
-    spawnFloat('+' + fmt(gain));
-    const btn = document.getElementById('crushBtn');
-    btn.classList.remove('squish');
-    void btn.offsetWidth;
-    btn.classList.add('squish');
-    renderStats();
+    const now = Date.now();
+    if(now - lastTapTime < 650){ comboCount += 1; } else { comboCount = 1; }
+    lastTapTime = now;
+    const badge = document.getElementById('comboBadge');
+    if(comboCount > 1){
+      badge.style.display = 'block';
+      badge.textContent = 'COMBO ×' + comboMult().toFixed(2);
+    }
+    clearTimeout(comboResetTimer);
+    comboResetTimer = setTimeout(() => { comboCount = 0; badge.style.display = 'none'; }, 1200);
+    hitCar();
   });
 
   document.getElementById('prestigeBtn').addEventListener('click', () => {
-    const gain = prestigeGain();
-    if(gain <= 0) return;
-    state.reputation += gain;
-    state.scrap = 0;
-    state.totalEarned = 0;
-    MACHINES.forEach(m => state.owned[m.id] = 0);
-    state.clickLevel = 0;
-    renderAll();
+    const gain = prestigeGain(); if(gain <= 0) return;
+    state.reputation += gain; state.scrap = 0; state.totalEarned = 0;
+    MACHINES.forEach(m => state.owned[m.id] = 0); state.clickLevel = 0;
+    renderAll(); save();
+  });
+
+  document.getElementById('muteBtn').addEventListener('click', () => {
+    state.muted = !state.muted;
+    document.getElementById('muteBtn').textContent = state.muted ? '🔇' : '🔊';
     save();
   });
 
-  // idle tick
   setInterval(() => {
     const rate = ratePerSec();
-    if(rate > 0){
-      earn(rate / 5); // ticking 5x/sec
-    }
+    if(rate > 0) earn(rate / 5);
     renderStats();
   }, 200);
+  setInterval(() => { renderMachineList(); renderUpgradeList(); }, 700);
 
-  // periodically refresh shop afford-states (cheap re-render)
-  setInterval(() => { renderMachineList(); renderUpgradeList(); }, 600);
+  function todayStr(){ return new Date().toISOString().slice(0,10); }
+  function initials(name){ return (name||'?').trim().slice(0,2).toUpperCase(); }
+
+  function applyProfileUi(){
+    document.getElementById('playerName').textContent = profile.name || '—';
+    document.getElementById('avatarInitial').textContent = initials(profile.name);
+    document.getElementById('streakVal').textContent = profile.streak || 0;
+  }
+
+  function handleDailyLogin(){
+    const today = todayStr();
+    if(profile.lastLogin === today) return;
+    const yest = new Date(Date.now() - 86400000).toISOString().slice(0,10);
+    profile.streak = (profile.lastLogin === yest) ? (profile.streak||0) + 1 : 1;
+    profile.lastLogin = today;
+    const bonus = 50 * profile.streak;
+    earn(bonus);
+    setTimeout(() => showToast('🔥 Day ' + profile.streak + ' streak!', 'Welcome back — +' + fmt(bonus) + ' login bonus'), 500);
+  }
 
   async function save(){
-    try{
-      await window.storage.set('scrapheap-save', JSON.stringify(state), false);
-    }catch(e){ /* storage not available; game still works in-session */ }
+    try{ await window.storage.set('scrapheap-save-v2', JSON.stringify({profile, state}), false); }
+    catch(e){ /* storage unavailable, still works in-session */ }
   }
-
   async function load(){
     try{
-      const res = await window.storage.get('scrapheap-save', false);
+      const res = await window.storage.get('scrapheap-save-v2', false);
       if(res && res.value){
         const loaded = JSON.parse(res.value);
-        state = Object.assign(state, loaded);
-        MACHINES.forEach(m => { if(!(m.id in state.owned)) state.owned[m.id] = 0; });
+        if(loaded.profile) profile = Object.assign(profile, loaded.profile);
+        if(loaded.state){
+          state = Object.assign(state, loaded.state);
+          MACHINES.forEach(m => { if(!(m.id in state.owned)) state.owned[m.id] = 0; });
+          if(state.carTier == null) state.carTier = 0;
+          if(!state.carMaxHp) nextCar();
+        }
       }
     }catch(e){ /* no save yet */ }
-    renderAll();
   }
 
-  setInterval(save, 6000);
-  load();
+  document.getElementById('startBtn').addEventListener('click', () => {
+    const val = document.getElementById('nameInput').value.trim();
+    if(!val) return;
+    profile.name = val;
+    document.getElementById('profileModal').style.display = 'none';
+    applyProfileUi();
+    ensureAudio();
+    handleDailyLogin();
+    renderAll();
+    save();
+    setInterval(save, 6000);
+  });
+  document.getElementById('nameInput').addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') document.getElementById('startBtn').click();
+  });
+
+  (async function boot(){
+    await load();
+    if(!state.carMaxHp) nextCar();
+    if(profile.name){
+      applyProfileUi();
+      handleDailyLogin();
+      renderAll();
+      setInterval(save, 6000);
+    } else {
+      document.getElementById('profileModal').style.display = 'flex';
+      renderAll();
+      setTimeout(() => document.getElementById('nameInput').focus(), 200);
+    }
+  })();
 })();
 </script>
 </body>
