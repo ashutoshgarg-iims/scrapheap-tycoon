@@ -74,6 +74,7 @@
   .car-visual{width:300px; transition:transform 0.3s ease, filter 0.3s ease; filter:drop-shadow(0 10px 14px rgba(0,0,0,0.5));}
   .car-visual svg{width:100%; height:auto; display:block; overflow:visible;}
   .zone{cursor:pointer;}
+  .zone.impact-flash{filter:url(#crumple);}
   .zone[data-type="tire"]{transform-box:fill-box; transform-origin:50% 100%; transition:transform 0.15s ease;}
   .crack-lines{opacity:0; transition:opacity 0.15s ease; pointer-events:none;}
   .wheel-rim{transform-box:fill-box; transform-origin:50% 50%; animation:spin 3.2s linear infinite;}
@@ -234,10 +235,30 @@
     <div class="settings-row"><span class="settings-label">Operator name</span><input id="settingsNameInput" style="width:140px; margin:0; padding:6px 8px;" maxlength="16"></div>
     <div class="settings-row"><span class="settings-label">Sound effects</span><button class="icon-btn" id="settingsSfxBtn">🔊</button></div>
     <div class="settings-row"><span class="settings-label">Music</span><button class="icon-btn" id="settingsMusicBtn">🎵</button></div>
+    <div class="settings-row"><span class="settings-label">Vibration (haptics)</span><button class="icon-btn" id="settingsHapticsBtn">📳</button></div>
+    <div class="settings-row"><span class="settings-label">Test vibration now</span><button class="icon-btn" id="testVibrateBtn">👆</button></div>
     <div class="settings-row"><span class="settings-label">Recent issues logged</span><span id="errorCount" style="font-family:'JetBrains Mono',monospace; color:var(--concrete); font-size:12px;">0</span></div>
     <button class="primary" id="settingsSaveBtn">Save changes</button>
     <button class="secondary danger" id="settingsResetBtn">Reset all progress</button>
     <button class="secondary" id="settingsCloseBtn">Close</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="aboutModal" style="display:none;">
+  <div class="modal-card">
+    <div class="mtitle">🔩 Why this game exists</div>
+    <div class="msub" style="text-align:left; line-height:1.6;">
+      Ever wanted to just <b>smash something</b> after a long day? Scrapheap Tycoon is built for
+      quick, satisfying stress relief — a couple of minutes of tapping, wrecking, and watching
+      numbers go up, whenever you need a short break.<br><br>
+      Underneath the smashing is a slow-building idle business: your machines keep earning while
+      you're away, so there's always a reason to check back later. Crush cars, hire machines,
+      hit milestones, unlock bigger rigs, come back tomorrow for your streak.<br><br>
+      <b>Who it's for:</b> casual mobile players who like satisfying "destruction" games and
+      light idle/tycoon progression — short sessions, low pressure, no skill required to enjoy it.<br><br>
+      <b>The goal:</b> five minutes of stress relief today, a reason to open it again tomorrow.
+    </div>
+    <button class="primary" id="aboutCloseBtn">Got it</button>
   </div>
 </div>
 
@@ -257,6 +278,7 @@
     <div class="streak" title="Daily login streak">🔥 <span id="streakVal">0</span></div>
     <button class="icon-btn" id="muteBtn" title="Toggle sound effects" aria-label="Toggle sound effects">🔊</button>
     <button class="icon-btn" id="musicBtn" title="Toggle music" aria-label="Toggle music">🎵</button>
+    <button class="icon-btn" id="aboutBtn" title="About this game" aria-label="About this game">ℹ️</button>
     <button class="icon-btn" id="settingsBtn" title="Settings" aria-label="Open settings">⚙️</button>
   </div>
 </div>
@@ -312,6 +334,20 @@
               <stop offset="55%" stop-color="#b8291d"/>
               <stop offset="100%" stop-color="#7a1710"/>
             </linearGradient>
+            <linearGradient id="gradDark" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#4a4d52"/>
+              <stop offset="55%" stop-color="#1c1e21"/>
+              <stop offset="100%" stop-color="#08090a"/>
+            </linearGradient>
+            <linearGradient id="gradCrimson" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ff5a4d"/>
+              <stop offset="55%" stop-color="#c41f1f"/>
+              <stop offset="100%" stop-color="#7a0f0f"/>
+            </linearGradient>
+            <filter id="crumple" x="-30%" y="-30%" width="160%" height="160%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.09 0.12" numOctaves="2" seed="7" result="noise"/>
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="7" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
             <linearGradient id="gradGlass" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#e3f3fa"/>
               <stop offset="100%" stop-color="#9cc6d8"/>
@@ -404,41 +440,41 @@
 
   const CAR_TIERS = [
     {
-      name:"Meridian Sedan", hp:8, reward:8,
+      name:"Blackline Muscle Coupe", hp:8, reward:8,
       zones:["hood","windshield","roof","frontDoor","rearWindow","rearDoor","trunk","frontTire","rearTire"],
       bodyMarkup: `
-        <path d="M18,150 Q18,118 55,112 Q75,70 115,64 Q150,40 210,42 Q265,44 292,68 Q335,72 355,110 Q378,116 378,150 Q378,168 358,168 L342,168 Q342,140 314,140 Q286,140 286,168 L114,168 Q114,140 86,140 Q58,140 58,168 L38,168 Q18,168 18,150 Z" fill="url(#gradMetal)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
-        <g class="zone" data-zone="hood" data-type="metal" role="button" aria-label="Hood" tabindex="0"><path d="M22,150 Q22,122 56,116 Q66,110 95,108 L95,150 Z" fill="url(#gradMetal)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/></g>
+        <path d="M18,150 Q18,118 55,112 Q75,70 115,64 Q150,40 210,42 Q265,44 292,68 Q335,72 355,110 Q378,116 378,150 Q378,168 358,168 L342,168 Q342,140 314,140 Q286,140 286,168 L114,168 Q114,140 86,140 Q58,140 58,168 L38,168 Q18,168 18,150 Z" fill="url(#gradDark)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
+        <g class="zone" data-zone="hood" data-type="metal" role="button" aria-label="Hood" tabindex="0"><path d="M22,150 Q22,122 56,116 Q66,110 95,108 L95,150 Z" fill="url(#gradDark)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/></g>
         <g class="zone" data-zone="windshield" data-type="glass" role="button" aria-label="Windshield" tabindex="0">
           <path d="M97,108 Q108,74 133,64 Q145,60 158,60 L158,108 Z" fill="url(#gradGlass)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
           <g class="crack-lines"><path d="M118 85 L130 100 L122 108" stroke="#ffffff" stroke-width="2" fill="none"/><path d="M138 78 L146 100" stroke="#ffffff" stroke-width="2" fill="none"/></g>
         </g>
-        <g class="zone" data-zone="roof" data-type="metal" role="button" aria-label="Roof" tabindex="0"><path d="M160,60 Q185,46 215,46 Q245,46 262,60 L262,66 L160,66 Z" fill="url(#gradMetal)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/></g>
-        <g class="zone" data-zone="frontDoor" data-type="metal" role="button" aria-label="Front door" tabindex="0"><rect x="97" y="110" width="88" height="40" rx="4" fill="url(#gradMetal)" stroke="#14161a" stroke-width="3"/><line x1="140" y1="118" x2="140" y2="146" stroke="#14161a" stroke-width="2"/><circle cx="168" cy="130" r="2.5" fill="#14161a"/></g>
+        <g class="zone" data-zone="roof" data-type="metal" role="button" aria-label="Roof" tabindex="0"><path d="M160,60 Q185,46 215,46 Q245,46 262,60 L262,66 L160,66 Z" fill="url(#gradDark)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/></g>
+        <g class="zone" data-zone="frontDoor" data-type="metal" role="button" aria-label="Front door" tabindex="0"><rect x="97" y="110" width="88" height="40" rx="4" fill="url(#gradDark)" stroke="#14161a" stroke-width="3"/><line x1="140" y1="118" x2="140" y2="146" stroke="#14161a" stroke-width="2"/><circle cx="168" cy="130" r="2.5" fill="#14161a"/></g>
         <g class="zone" data-zone="rearWindow" data-type="glass" role="button" aria-label="Rear window" tabindex="0">
           <path d="M160,66 L262,66 Q272,80 278,108 L188,108 Q184,86 160,66 Z" fill="url(#gradGlass)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
           <g class="crack-lines"><path d="M205 84 L218 102 L208 110" stroke="#ffffff" stroke-width="2" fill="none"/></g>
         </g>
-        <g class="zone" data-zone="rearDoor" data-type="metal" role="button" aria-label="Rear door" tabindex="0"><rect x="185" y="110" width="88" height="40" rx="4" fill="url(#gradMetal)" stroke="#14161a" stroke-width="3"/><circle cx="255" cy="130" r="2.5" fill="#14161a"/></g>
-        <g class="zone" data-zone="trunk" data-type="metal" role="button" aria-label="Trunk" tabindex="0"><path d="M275,108 L278,108 Q332,110 350,128 Q356,136 356,150 L275,150 Z" fill="url(#gradMetal)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/></g>
+        <g class="zone" data-zone="rearDoor" data-type="metal" role="button" aria-label="Rear door" tabindex="0"><rect x="185" y="110" width="88" height="40" rx="4" fill="url(#gradDark)" stroke="#14161a" stroke-width="3"/><circle cx="255" cy="130" r="2.5" fill="#14161a"/></g>
+        <g class="zone" data-zone="trunk" data-type="metal" role="button" aria-label="Trunk" tabindex="0"><path d="M275,108 L278,108 Q332,110 350,128 Q356,136 356,150 L275,150 Z" fill="url(#gradDark)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/></g>
         <g class="zone" data-zone="frontTire" data-type="tire" role="button" aria-label="Front tire" tabindex="0"><circle cx="98" cy="168" r="28" fill="url(#gradTire)" stroke="#14161a" stroke-width="3"/><g class="wheel-rim"><circle cx="98" cy="168" r="12" fill="#8a8d8a"/><line x1="98" y1="158" x2="98" y2="178" stroke="#4a4d4a" stroke-width="2"/><line x1="88" y1="168" x2="108" y2="168" stroke="#4a4d4a" stroke-width="2"/></g></g>
         <g class="zone" data-zone="rearTire" data-type="tire" role="button" aria-label="Rear tire" tabindex="0"><circle cx="308" cy="168" r="28" fill="url(#gradTire)" stroke="#14161a" stroke-width="3"/><g class="wheel-rim"><circle cx="308" cy="168" r="12" fill="#8a8d8a"/><line x1="308" y1="158" x2="308" y2="178" stroke="#4a4d4a" stroke-width="2"/><line x1="298" y1="168" x2="318" y2="168" stroke="#4a4d4a" stroke-width="2"/></g></g>
       `
     },
     {
-      name:"Backcountry Pickup", hp:42, reward:38,
+      name:"Crimson Street Coupe", hp:42, reward:38,
       zones:["hood","windshield","roof","door","bed","frontTire","rearTire"],
       bodyMarkup: `
-        <path d="M20,150 Q20,120 60,114 L365,114 Q368,120 368,150 L20,150 Z" fill="url(#gradMetal2)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
-        <g class="zone" data-zone="hood" data-type="metal" role="button" aria-label="Hood" tabindex="0"><path d="M22,150 Q22,124 50,118 Q60,114 72,112 L72,150 Z" fill="url(#gradMetal2)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/></g>
+        <path d="M20,150 Q20,120 60,114 L365,114 Q368,120 368,150 L20,150 Z" fill="url(#gradCrimson)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
+        <g class="zone" data-zone="hood" data-type="metal" role="button" aria-label="Hood" tabindex="0"><path d="M22,150 Q22,124 50,118 Q60,114 72,112 L72,150 Z" fill="url(#gradCrimson)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/></g>
         <g class="zone" data-zone="windshield" data-type="glass" role="button" aria-label="Windshield" tabindex="0">
           <path d="M74,112 Q84,80 100,68 L124,68 L124,112 Z" fill="url(#gradGlass)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
           <g class="crack-lines"><path d="M92 88 L104 100 L96 110" stroke="#ffffff" stroke-width="2" fill="none"/></g>
         </g>
-        <g class="zone" data-zone="roof" data-type="metal" role="button" aria-label="Cab roof" tabindex="0"><rect x="100" y="58" width="55" height="14" rx="4" fill="url(#gradMetal2)" stroke="#14161a" stroke-width="3"/></g>
-        <g class="zone" data-zone="door" data-type="metal" role="button" aria-label="Cab door" tabindex="0"><rect x="126" y="112" width="60" height="38" fill="url(#gradMetal2)" stroke="#14161a" stroke-width="3"/><circle cx="170" cy="130" r="2.5" fill="#14161a"/></g>
+        <g class="zone" data-zone="roof" data-type="metal" role="button" aria-label="Cab roof" tabindex="0"><rect x="100" y="58" width="55" height="14" rx="4" fill="url(#gradCrimson)" stroke="#14161a" stroke-width="3"/></g>
+        <g class="zone" data-zone="door" data-type="metal" role="button" aria-label="Cab door" tabindex="0"><rect x="126" y="112" width="60" height="38" fill="url(#gradCrimson)" stroke="#14161a" stroke-width="3"/><circle cx="170" cy="130" r="2.5" fill="#14161a"/></g>
         <g class="zone" data-zone="bed" data-type="metal" role="button" aria-label="Cargo bed" tabindex="0">
-          <rect x="188" y="118" width="175" height="32" rx="4" fill="url(#gradMetal2)" stroke="#14161a" stroke-width="3"/>
+          <rect x="188" y="118" width="175" height="32" rx="4" fill="url(#gradCrimson)" stroke="#14161a" stroke-width="3"/>
           <line x1="188" y1="122" x2="363" y2="122" stroke="#14161a" stroke-width="2" opacity="0.5"/>
         </g>
         <g class="zone" data-zone="frontTire" data-type="tire" role="button" aria-label="Front tire" tabindex="0"><circle cx="100" cy="168" r="26" fill="url(#gradTire)" stroke="#14161a" stroke-width="3"/><g class="wheel-rim"><circle cx="100" cy="168" r="11" fill="#8a8d8a"/><line x1="100" y1="159" x2="100" y2="177" stroke="#4a4d4a" stroke-width="2"/><line x1="91" y1="168" x2="109" y2="168" stroke="#4a4d4a" stroke-width="2"/></g></g>
@@ -446,7 +482,7 @@
       `
     },
     {
-      name:"Highland SUV", hp:175, reward:160,
+      name:"Venom Supercar", hp:175, reward:160,
       zones:["hood","windshield","roof","frontDoor","rearWindow","rearDoor","trunk","frontTire","rearTire"],
       bodyMarkup: `
         <path d="M16,152 Q16,110 60,104 Q80,58 125,52 Q155,34 215,36 Q270,38 298,60 Q345,64 362,104 Q382,110 382,152 Q382,170 362,170 L346,170 Q346,142 318,142 Q290,142 290,170 L108,170 Q108,142 80,142 Q52,142 52,170 L36,170 Q16,170 16,152 Z" fill="url(#gradMetal3)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
@@ -469,7 +505,7 @@
       `
     },
     {
-      name:"Driftwood Cargo Van", hp:640, reward:600,
+      name:"Aurum GT", hp:640, reward:600,
       zones:["frontPanel","windshield","roof","sidePanel","rearDoors","frontTire","rearTire"],
       bodyMarkup: `
         <path d="M18,165 L18,72 Q18,60 32,60 L360,60 Q372,60 372,72 L372,165 Z" fill="url(#gradMetal4)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
@@ -490,7 +526,7 @@
       `
     },
     {
-      name:"Harborline Transit Bus", hp:2200, reward:2100,
+      name:"Coastline Coach", hp:2200, reward:2100,
       zones:["windshield","roof","sideWindow1","sideWindow2","lowerPanel","rear","frontTire","rearTire"],
       bodyMarkup: `
         <path d="M18,168 L18,68 Q18,58 30,58 L370,58 Q382,58 382,68 L382,168 Z" fill="url(#gradMetal5)" stroke="#14161a" stroke-width="3" stroke-linejoin="round"/>
@@ -510,6 +546,7 @@
         <g class="zone" data-zone="lowerPanel" data-type="metal" role="button" aria-label="Lower body panel" tabindex="0">
           <rect x="62" y="120" width="231" height="48" fill="url(#gradMetal5)" stroke="#14161a" stroke-width="3"/>
           <rect x="80" y="130" width="40" height="28" rx="3" fill="#2b333b" stroke="#14161a" stroke-width="2"/>
+          <rect x="62" y="140" width="231" height="9" fill="#f3f0e8" opacity="0.85"/>
         </g>
         <g class="zone" data-zone="rear" data-type="metal" role="button" aria-label="Rear panel" tabindex="0"><rect x="297" y="76" width="83" height="92" fill="url(#gradMetal5)" stroke="#14161a" stroke-width="3"/></g>
         <g class="zone" data-zone="frontTire" data-type="tire" role="button" aria-label="Front tire" tabindex="0"><circle cx="95" cy="170" r="26" fill="url(#gradTire)" stroke="#14161a" stroke-width="3"/><g class="wheel-rim"><circle cx="95" cy="170" r="11" fill="#8a8d8a"/><line x1="95" y1="161" x2="95" y2="179" stroke="#4a4d4a" stroke-width="2"/><line x1="86" y1="170" x2="104" y2="170" stroke="#4a4d4a" stroke-width="2"/></g></g>
@@ -579,7 +616,7 @@
     scrap:0, totalEarned:0, clickLevel:0, owned:{}, reputation:0, gems:0,
     carsDestroyed:0, milestoneIndex:0, carHp:CAR_TIERS[0].hp, carMaxHp:CAR_TIERS[0].hp,
     zoneDamage:{}, muted:false, musicMuted:false, lastActive:Date.now(), firstLaunch:Date.now(),
-    dailyQuests:[], questsDate:null, boostUntil:0, saveFailCount:0, centerLog:[],
+    dailyQuests:[], questsDate:null, boostUntil:0, saveFailCount:0, centerLog:[], hapticsEnabled:true,
   };
   MACHINES.forEach(m => state.owned[m.id] = 0);
   CAR_TIERS[0].zones.forEach(z => state.zoneDamage[z] = 0);
@@ -714,11 +751,27 @@
       o.connect(g).connect(ctx.destination); o.start(t0); o.stop(t0+0.3);
     });
   }
-  function vibrate(pattern){
+  // Haptics are their own toggle now — NOT tied to the SFX mute (that coupling was
+  // the bug: if sound got muted, vibration silently died with no way to tell).
+  // Prefers the native Capacitor Haptics plugin (far more reliable inside an Android
+  // WebView than the raw browser Vibration API) and falls back to navigator.vibrate.
+  function nativeHaptics(){
     try{
-      if(state.muted) return; // haptics follow the SFX mute toggle
-      if(navigator.vibrate) navigator.vibrate(pattern);
+      if(window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Haptics) return window.Capacitor.Plugins.Haptics;
     }catch(e){}
+    return null;
+  }
+  function vibrate(pattern){
+    if(!state.hapticsEnabled) return;
+    try{
+      const H = nativeHaptics();
+      if(H){
+        const heavy = Array.isArray(pattern) ? pattern.reduce((a,b)=>a+b,0) > 40 : pattern > 18;
+        H.impact({style: heavy ? "heavy" : "light"});
+        return;
+      }
+      if(navigator.vibrate) navigator.vibrate(pattern);
+    }catch(e){ logError("vibrate failed: " + e.message); }
   }
   // distinct feel per zone type: glass = a quick sharp tick, metal = a solid punch,
   // tire = a stubby double-thud
@@ -728,83 +781,113 @@
     else vibrate(22);
   }
 
-  // ---------- audio: low, driving, metal-leaning background loop ----------
-  // A steady distorted power-chord riff + a deep sustained drone underneath it,
-  // kept low in the mix and free of the high blippy tones that sounded "funny" before.
-  let musicGain = null, musicDistortion = null, musicTone = null, musicOn = false, musicScheduler = null;
-  let nextNoteTime = 0, currentStep = 0, droneOsc = null, droneGain = null;
-  const BPM = 100, STEP_DUR = 60/BPM/2;
-  const RIFF_PATTERN = [0,0,7,0, 0,0,10,7];
-  const ROOT = 41.2; // low E1 — deep, grounded root note
-  function makeDistortionCurve(amount){
-    const k = amount, n = 8192, curve = new Float32Array(n), deg = Math.PI/180;
-    for(let i=0;i<n;i++){ const x = i*2/n - 1; curve[i] = (3+k)*x*20*deg / (Math.PI + k*Math.abs(x)); }
-    return curve;
+  // ---------- audio: cinematic dark-and-driving background score ----------
+  // Redesigned from scratch: sparse deep war-drum percussion, a slow minor-key pad
+  // that swells in and out (the "spooky" tension), a low grounded drone (the
+  // "motivational, dominant but not harsh" engine hum), and a simple homemade
+  // reverb (a short feedback delay) so nothing feels dry/cheap. No busy riffing,
+  // no bright blips — long notes, wide space between hits, low overall volume.
+  let musicGain = null, musicReverbSend = null, musicOn = false, musicScheduler = null;
+  let nextBeatTime = 0, beatIndex = 0, droneOsc1 = null, droneOsc2 = null, droneGain = null;
+  const BEAT_SEC = 0.95; // slow, deliberate pace — tension, not a dance beat
+  const ROOT = 55; // low A1
+  // minor + a tense flattened-second interval for the "spooky" character
+  const PAD_INTERVALS = [0, 3, 7, 13];
+  const DRUM_PATTERN = [1,0,1,0, 0,1,0,0, 1,0,0,1, 0,1,0,0]; // 16 beats, sparse & uneven
+  function setupReverb(ctx){
+    const delay = ctx.createDelay(1.0); delay.delayTime.value = 0.22;
+    const feedback = ctx.createGain(); feedback.gain.value = 0.38;
+    const wet = ctx.createGain(); wet.gain.value = 0.5;
+    delay.connect(feedback); feedback.connect(delay);
+    delay.connect(wet); wet.connect(musicGain);
+    return delay;
   }
-  function riffFreq(step, interval){ return ROOT * Math.pow(2, (RIFF_PATTERN[step % RIFF_PATTERN.length] + interval)/12); }
-  function scheduleStep(time, step){
+  function playDrum(time, accent){
     const ctx = ensureAudio(); if(!ctx || !musicGain) return;
-    // deep kick on the downbeats for a steady, motivating pulse
-    if(step % 4 === 0){
+    const o = ctx.createOscillator(); const g = ctx.createGain();
+    o.type="sine"; o.frequency.setValueAtTime(accent ? 95 : 75, time);
+    o.frequency.exponentialRampToValueAtTime(32, time+0.35);
+    g.gain.setValueAtTime(accent ? 0.4 : 0.28, time);
+    g.gain.exponentialRampToValueAtTime(0.001, time+0.5);
+    o.connect(g).connect(musicGain);
+    if(musicReverbSend) g.connect(musicReverbSend);
+    o.start(time); o.stop(time+0.55);
+    // soft noise transient on top for a "hit" rather than a pure boom
+    const bufferSize = Math.floor(ctx.sampleRate*0.05);
+    const buf = ctx.createBuffer(1,bufferSize,ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for(let i=0;i<bufferSize;i++) d[i] = (Math.random()*2-1)*(1-i/bufferSize);
+    const src = ctx.createBufferSource(); src.buffer = buf;
+    const lp = ctx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value = 1200;
+    const ng = ctx.createGain(); ng.gain.setValueAtTime(0.12, time);
+    src.connect(lp).connect(ng).connect(musicGain); src.start(time);
+  }
+  function playPadSwell(time){
+    const ctx = ensureAudio(); if(!ctx || !musicGain) return;
+    const dur = BEAT_SEC * 8;
+    PAD_INTERVALS.forEach((interval, i) => {
       const o = ctx.createOscillator(); const g = ctx.createGain();
-      o.type="sine"; o.frequency.setValueAtTime(110, time); o.frequency.exponentialRampToValueAtTime(38, time+0.14);
-      g.gain.setValueAtTime(0.34, time); g.gain.exponentialRampToValueAtTime(0.001, time+0.2);
-      o.connect(g).connect(musicGain); o.start(time); o.stop(time+0.22);
-    }
-    // subtle hi-hat, kept quiet so it never dominates
-    if(step % 2 === 1){
-      const bufferSize = Math.floor(ctx.sampleRate*0.03);
-      const buf = ctx.createBuffer(1,bufferSize,ctx.sampleRate);
-      const d = buf.getChannelData(0);
-      for(let i=0;i<bufferSize;i++) d[i] = (Math.random()*2-1)*(1-i/bufferSize);
-      const src = ctx.createBufferSource(); src.buffer=buf;
-      const hp = ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=7000;
-      const g = ctx.createGain(); g.gain.setValueAtTime(0.03, time);
-      src.connect(hp).connect(g).connect(musicGain); src.start(time);
-    }
-    // distorted power chord (root + fifth) — the "metal" character, routed through
-    // a shared distortion + lowpass so it stays gritty but never harsh/shrill
-    const env = ctx.createGain();
-    env.gain.setValueAtTime(0.001, time);
-    env.gain.linearRampToValueAtTime(0.16, time+0.015);
-    env.gain.exponentialRampToValueAtTime(0.001, time + STEP_DUR*0.85);
-    env.connect(musicDistortion);
-    const oRoot = ctx.createOscillator(); oRoot.type="sawtooth"; oRoot.frequency.value = riffFreq(step, 0);
-    const oFifth = ctx.createOscillator(); oFifth.type="sawtooth"; oFifth.frequency.value = riffFreq(step, 7);
-    oRoot.connect(env); oFifth.connect(env);
-    oRoot.start(time); oRoot.stop(time+STEP_DUR);
-    oFifth.start(time); oFifth.stop(time+STEP_DUR);
+      o.type = i === 0 ? "sawtooth" : "sine";
+      o.frequency.value = ROOT * Math.pow(2, interval/12);
+      const lp = ctx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value = 420 + i*30;
+      g.gain.setValueAtTime(0.0001, time);
+      g.gain.linearRampToValueAtTime(0.05, time + dur*0.35);
+      g.gain.linearRampToValueAtTime(0.0001, time + dur);
+      o.connect(lp).connect(g).connect(musicGain);
+      if(musicReverbSend) g.connect(musicReverbSend);
+      o.start(time); o.stop(time+dur+0.2);
+    });
+  }
+  function playSparsePluck(time){
+    const ctx = ensureAudio(); if(!ctx || !musicGain) return;
+    // a rare, quiet, unsettling high tone — the "spooky" accent, never bright/blippy
+    const o = ctx.createOscillator(); const g = ctx.createGain();
+    o.type="sine"; o.frequency.value = ROOT * Math.pow(2, (12+1)/12); // minor 2nd above the octave — tense
+    g.gain.setValueAtTime(0.0001, time);
+    g.gain.linearRampToValueAtTime(0.035, time+0.4);
+    g.gain.exponentialRampToValueAtTime(0.0001, time+2.2);
+    o.connect(g).connect(musicGain);
+    if(musicReverbSend) g.connect(musicReverbSend);
+    o.start(time); o.stop(time+2.3);
+  }
+  function scheduleBeat(time, i){
+    if(DRUM_PATTERN[i % DRUM_PATTERN.length]){ playDrum(time, i % 8 === 0); }
+    if(i % 16 === 0){ playPadSwell(time); }
+    if(i % 16 === 10 && Math.random() < 0.6){ playSparsePluck(time); }
   }
   function musicLoop(){
     const ctx = ensureAudio(); if(!ctx) return;
-    while(nextNoteTime < ctx.currentTime + 0.15){
-      scheduleStep(nextNoteTime, currentStep);
-      nextNoteTime += STEP_DUR;
-      currentStep = (currentStep+1) % RIFF_PATTERN.length;
+    while(nextBeatTime < ctx.currentTime + 0.2){
+      scheduleBeat(nextBeatTime, beatIndex);
+      nextBeatTime += BEAT_SEC;
+      beatIndex = (beatIndex+1) % DRUM_PATTERN.length;
     }
   }
   function startMusic(){
     if(musicOn || state.musicMuted) return;
     const ctx = ensureAudio(); if(!ctx) return;
     if(!musicGain){
-      musicGain = ctx.createGain(); musicGain.gain.value = 0.42;
-      musicTone = ctx.createBiquadFilter(); musicTone.type = "lowpass"; musicTone.frequency.value = 1600;
-      musicDistortion = ctx.createWaveShaper(); musicDistortion.curve = makeDistortionCurve(26); musicDistortion.oversample = "2x";
-      musicDistortion.connect(musicTone); musicTone.connect(musicGain); musicGain.connect(ctx.destination);
+      musicGain = ctx.createGain(); musicGain.gain.value = 0.4;
+      musicGain.connect(ctx.destination);
+      musicReverbSend = setupReverb(ctx);
     }
-    // constant low drone underneath the riff — the "dominating but low" mechanical hum
-    droneOsc = ctx.createOscillator(); droneOsc.type="sawtooth"; droneOsc.frequency.value = ROOT/2;
-    droneGain = ctx.createGain(); droneGain.gain.value = 0.05;
-    const droneFilter = ctx.createBiquadFilter(); droneFilter.type="lowpass"; droneFilter.frequency.value = 220;
-    droneOsc.connect(droneFilter).connect(droneGain).connect(musicGain);
-    droneOsc.start();
-    musicOn = true; nextNoteTime = ctx.currentTime + 0.1; currentStep = 0;
-    musicScheduler = setInterval(musicLoop, 60);
+    // constant low drone underneath everything — the grounded, motivational engine hum,
+    // two barely-detuned oscillators for a subtle unsettled shimmer rather than a clean tone
+    droneOsc1 = ctx.createOscillator(); droneOsc1.type="sawtooth"; droneOsc1.frequency.value = ROOT/2;
+    droneOsc2 = ctx.createOscillator(); droneOsc2.type="sawtooth"; droneOsc2.frequency.value = ROOT/2 * 1.008;
+    droneGain = ctx.createGain(); droneGain.gain.value = 0.06;
+    const droneFilter = ctx.createBiquadFilter(); droneFilter.type="lowpass"; droneFilter.frequency.value = 200;
+    droneOsc1.connect(droneFilter); droneOsc2.connect(droneFilter);
+    droneFilter.connect(droneGain).connect(musicGain);
+    droneOsc1.start(); droneOsc2.start();
+    musicOn = true; nextBeatTime = ctx.currentTime + 0.1; beatIndex = 0;
+    musicScheduler = setInterval(musicLoop, 100);
   }
   function stopMusic(){
     musicOn = false;
     if(musicScheduler){ clearInterval(musicScheduler); musicScheduler = null; }
-    if(droneOsc){ try{ droneOsc.stop(); }catch(e){} droneOsc = null; }
+    if(droneOsc1){ try{ droneOsc1.stop(); }catch(e){} droneOsc1 = null; }
+    if(droneOsc2){ try{ droneOsc2.stop(); }catch(e){} droneOsc2 = null; }
   }
 
   // ---------- confirm modal (point 1) ----------
@@ -1132,12 +1215,23 @@
 
     const dmg = clickPower() * comboMult();
     state.carHp -= dmg;
-    state.zoneDamage[zoneId] = Math.min(1, (state.zoneDamage[zoneId]||0) + 0.35);
+    const prevZoneDmg = state.zoneDamage[zoneId] || 0;
+    state.zoneDamage[zoneId] = Math.min(1, prevZoneDmg + 0.35);
     applyZoneVisual(zoneId);
     playZoneSound(type);
     vibrateForZone(type);
     spawnFloat("-" + dmg.toFixed(1), "#ffd27a");
     spawnBits(3, type==="glass" ? ["💎","✨"] : type==="tire" ? ["💨","⚫"] : ["🔩","⚙️"]);
+    // real-feeling impact: metal panels flash a crumpled-texture on every hit,
+    // and a heavier spark/smoke burst fires the moment a panel is nearly wrecked
+    const zoneEl = document.querySelector('.zone[data-zone="' + zoneId + '"]');
+    if(zoneEl && type !== "glass"){
+      zoneEl.classList.remove("impact-flash"); void zoneEl.offsetWidth; zoneEl.classList.add("impact-flash");
+      setTimeout(() => zoneEl.classList.remove("impact-flash"), 140);
+    }
+    if(prevZoneDmg < 0.9 && state.zoneDamage[zoneId] >= 0.9){
+      spawnBits(6, type==="glass" ? ["💎","💎","✨"] : type==="tire" ? ["💨","💨","🔥"] : ["🔥","💨","🔩"]);
+    }
     const visual = document.getElementById("carVisual");
     visual.classList.remove("hitpulse"); void visual.offsetWidth; visual.classList.add("hitpulse");
 
@@ -1205,10 +1299,17 @@
     document.getElementById("settingsNameInput").value = profile.name || "";
     document.getElementById("settingsSfxBtn").textContent = state.muted ? "🔇" : "🔊";
     document.getElementById("settingsMusicBtn").textContent = state.musicMuted ? "🔇" : "🎵";
+    document.getElementById("settingsHapticsBtn").textContent = state.hapticsEnabled ? "📳" : "🚫";
     let errCount = 0;
     try{ errCount = JSON.parse(localStorage.getItem("scrapheap-errorlog") || "[]").length; }catch(e){}
     document.getElementById("errorCount").textContent = errCount;
     document.getElementById("settingsModal").style.display = "flex";
+  });
+  document.getElementById("aboutBtn").addEventListener("click", () => {
+    document.getElementById("aboutModal").style.display = "flex";
+  });
+  document.getElementById("aboutCloseBtn").addEventListener("click", () => {
+    document.getElementById("aboutModal").style.display = "none";
   });
   document.getElementById("settingsCloseBtn").addEventListener("click", () => {
     document.getElementById("settingsModal").style.display = "none";
@@ -1223,6 +1324,20 @@
     document.getElementById("settingsMusicBtn").textContent = state.musicMuted ? "🔇" : "🎵";
     document.getElementById("musicBtn").textContent = state.musicMuted ? "🔇" : "🎵";
     if(state.musicMuted) stopMusic(); else startMusic();
+  });
+  document.getElementById("settingsHapticsBtn").addEventListener("click", () => {
+    state.hapticsEnabled = !state.hapticsEnabled;
+    document.getElementById("settingsHapticsBtn").textContent = state.hapticsEnabled ? "📳" : "🚫";
+    save();
+  });
+  document.getElementById("testVibrateBtn").addEventListener("click", () => {
+    const wasEnabled = state.hapticsEnabled;
+    state.hapticsEnabled = true;
+    vibrate([25,30,25,30,50]);
+    state.hapticsEnabled = wasEnabled;
+    const usingNative = !!nativeHaptics();
+    showToast(usingNative ? "📳 Sent via native Haptics plugin" : "📳 Sent via browser vibrate API",
+      usingNative ? "If you felt nothing, check the device's own vibration setting." : "If you felt nothing, add the VIBRATE permission (see chat) or install @capacitor/haptics.");
   });
   document.getElementById("settingsSaveBtn").addEventListener("click", () => {
     const val = document.getElementById("settingsNameInput").value.trim();
